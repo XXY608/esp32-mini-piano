@@ -1,0 +1,25 @@
+{
+  "source": "ESP-IDF v4.4.7 .gitmodules json/cJSON commit",
+  "files": [
+    {
+      "name": "cJSON.c",
+      "url": "https://raw.githubusercontent.com/DaveGamble/cJSON/87d8f0961a01bf09bef98ff89bae9fdec42181ee/cJSON.c",
+      "sha256": "de63e951ce3bc9b6938c7635575a6c90c3b364595b0b0f4c5ae8f9c83a43c17d",
+      "bytes": 78291
+    },
+    {
+      "name": "cJSON.h",
+      "url": "https://raw.githubusercontent.com/DaveGamble/cJSON/87d8f0961a01bf09bef98ff89bae9fdec42181ee/cJSON.h",
+      "sha256": "c01a8ca5609bb2c956dd1ae836d5d926ec68153ecebc5a75ea0febc2e076da8d",
+      "bytes": 16193
+    },
+    {
+      "name": "LICENSE",
+      "url": "https://raw.githubusercontent.com/DaveGamble/cJSON/87d8f0961a01bf09bef98ff89bae9fdec42181ee/LICENSE",
+      "sha256": "a36dda207c36db5818729c54e7ad4e8b0c6fba847491ba64f372c1a2037b6d5c",
+      "bytes": 1084
+    }
+  ],
+  "sdkHeaderSha256": "c01a8ca5609bb2c956dd1ae836d5d926ec68153ecebc5a75ea0febc2e076da8d",
+  "sdkHeaderTextExactlyMatchesUpstream": true
+}

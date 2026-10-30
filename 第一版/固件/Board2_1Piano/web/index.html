@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>迷你电子琴</title>
+<style>
+:root{color-scheme:dark;--bg:#101922;--card:#1b2835;--line:#3e5365;--accent:#98e0bd}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:#edf5fa;font:16px/1.6 system-ui,sans-serif}main{max-width:900px;margin:auto;padding:24px 18px 60px}header{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px}h1{font-size:26px;margin:0}h2{font-size:19px;margin:0 0 14px}p{margin:8px 0}.muted{color:#b4c5d4;font-size:14px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}section{border:1px solid var(--line);border-radius:16px;background:var(--card);padding:20px;margin-bottom:16px}button,input,select,textarea{font:inherit;border:1px solid #637c8e;border-radius:8px;padding:9px;background:#13202c;color:inherit}button{cursor:pointer;min-height:44px}button:hover{border-color:var(--accent)}button.primary{background:var(--accent);color:#10271d;border:0;font-weight:650}button:disabled{opacity:.45;cursor:wait}label{display:block;margin:10px 0}input[type=number]{width:105px}input[type=range]{width:100%;accent-color:var(--accent)}input[type=checkbox]{width:20px;height:20px;vertical-align:middle}textarea{width:100%;height:130px}.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}#status{padding:12px 0;min-height:55px}#message{position:sticky;top:8px;background:#273f50;border-radius:8px;padding:10px;z-index:1;white-space:pre-wrap;overflow-wrap:anywhere}#message:empty{display:none}.song{padding:14px 0;border-top:1px solid var(--line)}.song strong{overflow-wrap:anywhere}.song .row{margin-top:8px}.keys{display:flex;gap:4px;flex-wrap:wrap}.key{min-width:34px;text-align:center;border:1px solid #60778a;border-radius:5px;padding:8px 6px}.key.on{background:var(--accent);color:#10271d}summary{cursor:pointer}a{color:var(--accent)}:focus-visible{outline:3px solid #a9d9ff;outline-offset:3px}#file{max-width:100%}
+</style></head><body><main><header><div><h1>迷你电子琴</h1><div class="muted">实体演奏 · 曲库 · 跟弹练习</div></div><span id="connection" role="status">连接中</span></header><div id="message" role="status" aria-live="polite"></div><div id="status"></div>
+<div class="grid"><section><h2>演奏设置</h2><label>音色 <select id="instrument"><option value="0">纯音</option><option value="1">合成钢琴</option><option value="2">合成风琴</option><option value="3">GS钢琴</option><option value="4">Salamander钢琴</option><option value="5">口琴</option><option value="6">长笛</option><option value="7">小提琴</option><option value="8">木吉他</option><option value="9">GS风琴</option><option value="10">八音盒</option></select></label><label>音量 <output id="volumeValue">80%</output><input id="volume" type="range" min="0" max="100" value="80"></label><div class="row"><label>BPM <input id="bpm" type="number" min="20" max="400" value="120"></label><label>移调 <input id="transpose" type="number" min="-12" max="12" value="0"></label></div><div class="row"><label><input id="metronome" type="checkbox"> 节拍器</label><label><input id="repeat" type="checkbox"> 循环播放</label><label><input id="showLyrics" type="checkbox"> 显示歌词</label></div><button id="apply" class="primary">应用设置</button><p class="muted">播放歌曲会采用该曲 BPM；此处可调整播放速度。社区采样音色用于机身扬声器，需SD卡内的piano-samples目录；手机扬声器仍为浏览器近似合成。无源谱 BPM 时使用的 120 仅为默认播放速度。</p></section>
+<section><h2>连接手机扬声器</h2><p>手机连电子琴Wi-Fi后，在手机浏览器打开本页，点击启用，再弹实体琴键或播放歌曲。</p><div class="row"><button id="phoneAudioStart" class="primary">启用手机扬声器</button><button id="phoneAudioStop">停止手机发声</button></div><p id="phoneAudioState" role="status">未启用</p><p class="muted">启用后机身扬声器静音，原音量设置保留。机身“音色与音量 → 发声设备”可切换本机扬声器和已启用的手机扬声器。仅连接Wi-Fi不代表手机已获得发声权限。停止或切后台恢复机身发声；连接中断后机身最多约2秒自动恢复。保持页面在前台并调高手机媒体音量。通过Wi-Fi传音符、手机合成声音；有网络延迟，音色与机身不同。</p></section>
+<section><h2>播放控制</h2><div class="row"><button id="pause">暂停</button><button id="resume">继续</button><button id="stop">停止歌曲</button></div></section></div>
+<section><div class="row"><h2 style="margin:0">设备曲库</h2><button id="refresh">刷新</button></div><p class="muted">内置音阶无需存储卡。已上传曲目断网后可用机身菜单选择。</p><div id="songs">正在读取</div></section>
+<section><h2>上传音色到 SD 卡</h2><p>SD 卡留在屏幕后卡槽中。选择电脑或手机里的 <code>.hps</code> 音色文件，可多选后依次上传。</p><input id="sampleFiles" type="file" accept=".hps,application/octet-stream" multiple aria-label="选择HPS音色文件"><div class="row"><button id="sampleUpload" class="primary">上传音色到SD卡</button><button id="sampleCancel" disabled>取消音色上传</button></div><progress id="sampleProgress" max="100" value="0" style="width:100%" aria-label="音色上传进度"></progress><p id="sampleResult" role="status">尚未上传</p><p class="muted">使用 3.hps～10.hps（每份约5.22MiB），不支持直接上传SF2或DLL。分段上传并校验SD回读，校验成功才替换该音色；取消或断线保留旧音色。上传时停止手机扬声器，完成后可在上方选择音色。来源：GeneralUser GS / S. Christian Collins；Salamander / Alexander Holm（CC BY 3.0），精简采样说明及原许可随音色包提供。</p></section>
+<section><h2>导入歌曲</h2><input id="file" type="file" accept=".txt,.json,text/plain,application/json"><label>曲名 <input id="title" value="我的曲谱" maxlength="80"></label><label>播放 BPM <input id="importBpm" type="number" min="20" max="400" value="120"></label><label>拍号（可选） <input id="importMeter" placeholder="未标注，如 4/4" maxlength="5"></label><p id="bpmSource" class="muted">可从文件名“源谱 BPM：XX”读取；没有标注时请填写播放速度。</p><label for="score">UTF-8 简谱 TXT</label><textarea id="score" placeholder="1 2 3 4 |&#10;5_ 5_ 6 7 【1】 |"></textarea><label for="lyrics">逐音歌词（可选）</label><textarea id="lyrics" placeholder="一 闪 一 闪 亮 晶 晶 _"></textarea><p class="muted">用空格分隔每个音的歌词，一字多音或无歌词的音用 _；休止符和延长线不占项。留空即无歌词；打开显示歌词开关不会自动生成歌词，旧歌曲需要补词后重新上传。每音最多 24 字节，小屏按音符宽度截取；歌词随 JSON 保存，TXT 保持纯谱面。机身菜单：曲谱与练习 → 显示歌词。</p><div class="row"><button id="preview">检查谱面</button><button id="upload" class="primary">检查并上传</button></div><p id="previewResult" class="muted">支持高低音、升半音、休止、下划线、附点和延长线。每首最多 1024 个音符。</p></section>
+<section><details><summary>按键检查与机身菜单</summary><p>依次按下七个白键和三个修饰键，对照下方亮灯。单键通过不代表其余焊点已验证。</p><div class="keys" id="keys"></div><p class="muted">单独长按最右侧 HIGH 键 1.2 秒进入功能菜单，菜单内按一下 HIGH 直接返回演奏页；未确认编辑按取消处理。自动播放时单独按一下 LOW 暂停/继续（松开生效），组合演奏仍作降八度。六个分区：自由演奏、曲谱与练习、音色与音量、节奏与调性、手机连接、设备状态。白键 1/2 首尾循环移动，按住 1.2 秒后连续移动，3 确认，4 返回；参数编辑时 1 减少、2 增加（音量为 1 增加、2 减少）、3 完成、4 取消。选曲列表中 5 删除歌曲，3 再确认、4 取消。演奏模式可选自由演奏、简单练习、节奏练习。简单练习允许提前连续输入，按谱排队发声；节奏练习要求前音结束后再按，不接受抢按。两种练习均只需按音级，自动处理高低音和升号。其余非编辑时 5/6 调音量，BPM 编辑时 5/6 按 10 调节；7 无隐藏功能。选曲不自动播放，按白键可接管自动播放。设备状态里的逐键检查不发声，4 返回。</p><p id="diagnostics" class="muted"></p><button id="initialize">初始化不可用的闪存曲库</button><p class="muted">仅在没有挂载闪存时可用，需明确确认格式化；SD 卡不会被格式化。运行中更换 SD 卡后需重启。</p></details></section>
+</main><script>/* SCORE_PARSER */</script><script>
+'use strict';
+const $ = id => document.getElementById(id);
+let state = {}, importedJson = null, busy = false, polling = false;
+function message(text) { $('message').textContent = text; }
+async function api(path, body, method) {
+  const response = await fetch(path, { method: method || (body === undefined ? 'GET' : 'POST'), headers: { 'Content-Type': 'application/json' }, body: body === undefined ? undefined : JSON.stringify(body), signal: AbortSignal.timeout(15000) });
+  const result = await response.json(); if (!response.ok || result.ok === false) throw Error(result.message || '操作失败'); return result;
+}
+async function run(action) {
+  if (busy) return; busy = true;
+  try { await action(); await update(); } catch (error) { message(error.message); } finally { busy = false; }
+}
+function button(label, action) { const el = document.createElement('button'); el.textContent = label; el.addEventListener('click', () => run(action)); return el; }
+async function update() {
+  if (polling) return; polling = true;
+  try {
+    state = await api('/api/status'); $('connection').textContent = '已连接';
+    const mode = { manual: '自由演奏', play: '自动播放', teach: '跟弹练习', free: '自由演奏（曲谱）', simple: '简单练习', rhythm: '节奏练习' }[state.playerMode] || state.playerMode;
+    $('status').textContent = mode + (state.paused ? ' · 已暂停' : '') + ' · 音符 ' + (state.currentMidi < 0 ? '—' : state.currentMidi) + ' · 进度 ' + Math.min(state.noteIndex + 1, state.noteCount) + '/' + state.noteCount;
+    for (let i = 0; i < 10; i++) $('key' + i).classList.toggle('on', Boolean(state.keyMask & (1 << i)));
+    $('diagnostics').textContent = state.firmwareVersion + ' · ' + state.storage + ' · I2S初始化 ' + state.audioReady + ' · 按键任务 ' + state.controlsReady + ' · PSRAM ' + state.psramBytes + ' 字节 · 音源 ' + (state.sampleStatus || 'synth');
+    if (!busy && !document.activeElement.matches('input,select,textarea')) {
+      for (const key of ['instrument','bpm','transpose','volume']) $(key).value = key === 'volume' ? state.volumePercent : state[key];
+      $('volumeValue').textContent = state.volumePercent + '%';
+      for (const key of ['repeat','metronome','showLyrics']) $(key).checked = state[key];
+    }
+  } catch (error) { $('connection').textContent = '连接中断'; } finally { polling = false; }
+}
+async function list() {
+  const result = await api('/api/songs'); const host = $('songs'); host.replaceChildren();
+  for (const song of result.songs) {
+    const el = document.createElement('div'); el.className = 'song'; const name = document.createElement('strong'); name.textContent = song.title; el.append(name);
+    const info = document.createElement('div'); info.className = 'muted'; info.textContent = (song.bpm == null ? 'BPM 未标注（默认 120）' : 'BPM ' + song.bpm) + ' · ' + song.noteCount + ' 音符'; el.append(info);
+    const row = document.createElement('div'); row.className = 'row';
+    for (const [label, mode] of [['播放','play'],['跟弹','teach']]) row.append(button(label, async () => { await api('/api/song/' + mode, { id: song.id }); message(label + '已开始'); }));
+    row.append(button('下载', () => download('/api/songs/' + encodeURIComponent(song.id), song.title + '.json')));
+    if (song.id !== 'demo-scale') row.append(button('删除', async () => { if (!confirm('删除《' + song.title + '》？')) return; await api('/api/songs/' + encodeURIComponent(song.id), undefined, 'DELETE'); await list(); message('已删除'); }));
+    el.append(row); host.append(el);
+  }
+}
+function songForUpload() {
+  const song = importedJson ? JSON.parse(JSON.stringify(importedJson)) : { id: 'song-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2,8), notes: PianoScore.parseScore($('score').value) };
+  song.title = $('title').value.trim(); song.bpm = Number($('importBpm').value);
+  const meter = $('importMeter').value.trim();
+  if (meter) song.timeSignature = meter; else delete song.timeSignature;
+  return PianoScore.withLyrics(song, $('lyrics').value);
+}
+function preview() { try { const s = songForUpload(); $('previewResult').textContent = '检查通过：' + s.notes.length + ' 个音符，' + s.notes.reduce((sum,n) => sum + n.durationBeats,0) + ' 拍，播放 BPM ' + s.bpm; return s; } catch (error) { $('previewResult').textContent = '谱面未通过检查：' + error.message; throw error; } }
+async function download(path, filename) { const data = await api(path); const url = URL.createObjectURL(new Blob([JSON.stringify(data,null,2)], {type:'application/json'})); const a = document.createElement('a'); a.href = url; a.download = filename; a.click(); setTimeout(() => URL.revokeObjectURL(url),2000); }
+for (const [id,path] of Object.entries({pause:'song/pause',resume:'song/resume',stop:'song/stop'})) $(id).onclick = () => run(async () => { const r = await api('/api/' + path, {}); message(r.message); });
+$('refresh').onclick = () => run(list);
+$('volume').oninput = () => { $('volumeValue').textContent = $('volume').value + '%'; };
+$('volume').onchange = () => run(async () => { await api('/api/device/volume',{volumePercent:Number($('volume').value)}); });
+$('apply').onclick = () => run(async () => { message('正在应用音色，首次载入SD采样可能需要数秒…'); await api('/api/device/settings',{instrument:Number($('instrument').value),bpm:Number($('bpm').value),transpose:Number($('transpose').value),metronome:$('metronome').checked,repeat:$('repeat').checked,showLyrics:$('showLyrics').checked}); message('设置已应用'); });
+$('preview').onclick = () => run(async () => { preview(); });
+$('upload').onclick = () => run(async () => { await api('/api/songs/upload',preview()); await list(); message('歌曲已上传'); });
+$('score').oninput = () => { importedJson = null; $('previewResult').textContent = '谱面已修改，请重新检查。'; };
+$('file').onchange = () => run(async () => {
+  const f = $('file').files[0]; if (!f) return; if (f.size > 120 * 1024) throw Error('文件超过 120 KiB');
+  const text = await f.text(); $('lyrics').value = ''; $('importMeter').value = ''; $('title').value = f.name.replace(/\.(txt|json)$/i,'').replace(/_源谱\s*BPM[：:].*$/i,'');
+  if (/\.json$/i.test(f.name)) { importedJson = PianoScore.validateSong(JSON.parse(text)); $('lyrics').value = importedJson.notes.some(n => n.lyric) ? importedJson.notes.filter(n => n.pitch !== 0).map(n => n.lyric || '_').join(' ') : ''; $('title').value = importedJson.title; $('importBpm').value = importedJson.bpm || 120; $('importMeter').value = importedJson.timeSignature || ''; $('score').value = '已读取 JSON：' + importedJson.notes.length + ' 个音符。编辑本框将改用 TXT 解析。'; }
+  else { importedJson = null; $('score').value = text; const m = /BPM\s*[：:]\s*(\d+)/i.exec(f.name); $('importBpm').value = m ? Number(m[1]) : 120; $('bpmSource').textContent = m ? '已从文件名读取源谱 BPM：' + m[1] : '源谱 BPM 未标注；120 为默认播放速度，可修改。'; }
+  preview();
+});
+const sampleCrcTable=Uint32Array.from({length:256},(_,n)=>{for(let bit=0;bit<8;bit++) n=(n>>>1)^((n&1)?0xedb88320:0);return n>>>0;});
+function sampleCrc32(bytes) {let crc=0xffffffff;for(const value of bytes) crc=(crc>>>8)^sampleCrcTable[(crc^value)&255];return ((crc^0xffffffff)>>>0).toString(16).padStart(8,'0');}
+function sampleFileInfo(bytes) {
+  if(bytes.length!==5468432) throw Error('音色大小不正确，请选择生成的HPS文件');
+  const view=new DataView(bytes.buffer,bytes.byteOffset,bytes.byteLength);
+  const fields=[22050,36,2,31,88200];
+  if(String.fromCharCode(...bytes.subarray(0,4))!=='HPS1' || fields.some((n,i)=>view.getUint32(4+i*4,true)!==n) || view.getUint32(28,true)!==0) throw Error('音色格式不正确');
+  const instrument=view.getUint32(24,true);
+  if(instrument<3||instrument>10) throw Error('音色编号必须为3～10');
+  return {instrument,bytes:bytes.length,crc32:sampleCrc32(bytes)};
+}
+let sampleAbort=null;
+$('sampleCancel').onclick=()=>sampleAbort?.abort();
+$('sampleUpload').onclick=()=>run(async()=>{
+  const files=Array.from($('sampleFiles').files);
+  if(!files.length) throw Error('请先选择HPS音色文件');
+  sampleAbort=new AbortController();const signal=sampleAbort.signal;
+  $('sampleCancel').disabled=false;$('sampleUpload').disabled=true;$('sampleFiles').disabled=true;
+  let session=0,completed=0,finishing=false;const seen=new Set();
+  try {
+    await phoneAudio.stop();
+    for(const file of files) {
+      if(signal.aborted) throw new DOMException('取消','AbortError');
+      $('sampleResult').textContent=`检查 ${file.name}…`;
+      const bytes=new Uint8Array(await file.arrayBuffer());const info=sampleFileInfo(bytes);
+      if(seen.has(info.instrument)) throw Error('选择了重复的音色编号');seen.add(info.instrument);
+      if(signal.aborted) throw new DOMException('取消','AbortError');
+      const started=await api('/api/samples/begin',info);session=started.session;$('sampleCancel').disabled=false;
+      for(let offset=0;offset<bytes.length;) {
+        if(signal.aborted) throw new DOMException('取消','AbortError');
+        const end=Math.min(offset+64620,bytes.length);
+        const response=await fetch('/api/samples/chunk',{method:'POST',headers:{'Content-Type':'application/octet-stream','X-Sample-Session':String(session),'X-Sample-Offset':String(offset)},body:bytes.subarray(offset,end),signal:AbortSignal.any([signal,AbortSignal.timeout(30000)])});
+        const result=await response.json();if(!response.ok||result.ok===false||result.offset!==end) throw Error(result.message||'上传偏移校验失败');
+        offset=end;const percent=Math.round(100*(completed+offset/bytes.length)/files.length);
+        $('sampleProgress').value=percent;$('sampleResult').textContent=`${file.name}：${Math.floor(offset/bytes.length*100)}%（已完成 ${completed}/${files.length}）`;
+      }
+      if(signal.aborted) throw new DOMException('取消','AbortError');
+      $('sampleResult').textContent=`${file.name}：SD回读校验中，请稍候…`;
+      finishing=true;$('sampleCancel').disabled=true;
+      await api('/api/samples/finish',{session});session=0;completed++;finishing=false;
+    }
+    $('sampleProgress').value=100;$('sampleResult').textContent=`已上传并校验 ${completed} 个音色，可选择试听`;
+    message('音色已保存到设备SD卡');
+  } catch(error) {
+    $('sampleResult').textContent=`${signal.aborted?'上传已取消':'上传未完成：'+error.message}；已确认完成 ${completed}/${files.length}，${finishing?'当前音色提交结果未确认，请重新连接检查':'未提交的音色保留旧文件或备份'}`;
+    if(session) await api('/api/samples/cancel',{session}).catch(()=>{});
+    if(!signal.aborted) throw error;
+  } finally {sampleAbort=null;$('sampleCancel').disabled=true;$('sampleUpload').disabled=false;$('sampleFiles').disabled=false;}
+});
+$('initialize').onclick = () => run(async () => { if (confirm('这会格式化不可用的内部闪存曲库并删除其中原有歌曲。SD 卡保持不变。确认继续？')) { const r = await api('/api/storage/initialize',{confirm:'FORMAT'}); message(r.message); await list(); } });
+['1','2','3','4','5','6','7','LOW','#','HIGH'].forEach((name,i) => { const span = document.createElement('span'); span.id = 'key' + i; span.className = 'key'; span.textContent = name; $('keys').append(span); });
+
+// Explicit user gesture unlocks Web Audio; no automatic autoplay.
+const phoneAudio = {
+  ctx:null, enabled:false, phoneRoute:null, cursor:0, generation:0, voices:new Set(), voice:null, lastClick:false, session:0, releasing:Promise.resolve(),
+  async output(session,enabled) {
+    const response=await fetch('/api/audio/output',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({session,enabled}),keepalive:!enabled,signal:AbortSignal.timeout(900)});
+    const result=await response.json();
+    if(!response.ok || !result.ok) throw Error('无法切换机身输出，请确认连接和固件版本');
+  },
+  async start() {
+    const released=this.stop(); const token=++this.generation;
+    try {
+      const Audio=window.AudioContext||window.webkitAudioContext;
+      if(!Audio) throw Error('浏览器不支持音频，请使用Chrome或Safari');
+      const ctx=new Audio(); this.ctx=ctx; await ctx.resume();
+      await released;
+      if(token!==this.generation) return;
+      if(ctx.state!=='running') throw Error('请再次点击允许声音');
+      const random=new Uint32Array(1); crypto.getRandomValues(random);
+      const session=random[0]||1; this.session=session;
+      await this.output(session,true);
+      if(token!==this.generation) {await this.output(session,false).catch(()=>{});return;}
+      this.enabled=true; $('phoneAudioState').textContent='手机发声已启用 · 机身已静音';
+      await this.poll(token);
+    } catch(e) { if(token===this.generation) { this.stop(); $('phoneAudioState').textContent='手机发声停止：'+e.message; } }
+  },
+  stop() {
+    ++this.generation; this.enabled=false; this.phoneRoute=null; this.cursor=0; this.baseMs=null; this.lastClick=false; this.voice=null; this.soundKey=null;
+    for(const osc of this.voices) { try {osc.stop();} catch(_) {} } this.voices.clear();
+    if(this.ctx) { this.ctx.close().catch(()=>{}); this.ctx=null; }
+    const session=this.session;this.session=0;
+    if(session) this.releasing=Promise.all([this.releasing,this.output(session,false).catch(()=>{})]);
+    $('phoneAudioState').textContent='手机发声已停止 · 恢复机身输出';
+    return this.releasing;
+  },
+  schedule(e,when) {
+    const ctx=this.ctx; if(!ctx) return;
+    const key=e.slice(2,6).join(':');const changed=key!==this.soundKey;this.soundKey=key;
+    if(changed && this.voice) { const old=this.voice; old.gain.gain.cancelScheduledValues(when); old.gain.gain.setValueAtTime(old.level,when); old.gain.gain.linearRampToValueAtTime(0,when+.008); try {old.osc.stop(when+.01);} catch(_) {} this.voice=null; }
+    const midi=e[2], volume=e[3], instrument=e[4];
+    const make=(frequency,level,type,duration) => {
+      const osc=ctx.createOscillator(), gain=ctx.createGain(); osc.type=type; osc.frequency.value=frequency;
+      gain.gain.setValueAtTime(0,when); gain.gain.linearRampToValueAtTime(level,when+.008);
+      osc.connect(gain); gain.connect(ctx.destination); this.voices.add(osc);
+      osc.onended=()=>{osc.disconnect();gain.disconnect();this.voices.delete(osc);};osc.start(when);
+      if(duration) {gain.gain.linearRampToValueAtTime(0,when+duration);osc.stop(when+duration+.01);}
+      return {osc,gain,level};
+    };
+    if(changed && midi>=0 && volume>0) this.voice=make(440*Math.pow(2,(midi-69)/12),volume/100*.18*(instrument===0?Math.min(1,Math.pow(2,(48-midi)/12)):1),['sine','triangle','square'][instrument]||'sine');
+    if(e[6] && !this.lastClick && volume>0) make(1600,volume/100*.06,'sine',.025);
+    this.lastClick=!!e[6];
+  },
+  async poll(token) {
+    while(this.enabled && token===this.generation) {
+      if(document.hidden || this.ctx.state!=='running') throw Error('页面进入后台或声音被系统暂停');
+      const response=await fetch('/api/audio/events?after='+this.cursor+'&session='+this.session,{cache:'no-store',signal:AbortSignal.timeout(900)});
+      if(!response.ok) throw Error('连接中断'); const packet=await response.json();
+      if(token!==this.generation) return;
+      if(!Array.isArray(packet.events)) throw Error('固件不支持手机发声，请更新固件');
+      const phoneRoute=packet.phoneOutput===true;
+      const routeChanged=phoneRoute!==this.phoneRoute;
+      if(phoneRoute!==this.phoneRoute) {
+        this.phoneRoute=phoneRoute; this.baseMs=null; this.soundKey=null; this.lastClick=false; this.voice=null;
+        for(const osc of this.voices) {try {osc.stop();} catch(_) {}} this.voices.clear();
+        $('phoneAudioState').textContent=phoneRoute?'手机发声已启用 · 机身已静音':'本机发声 · 手机已就绪，可在琴上切换';
+        this.cursor=0;
+      }
+      if(packet.reset) this.baseMs=null;
+      for(const event of packet.events) {
+        if(this.baseMs===null || this.baseMs===undefined) {this.baseMs=event[1];this.baseTime=this.ctx.currentTime+.06;}
+        let when=this.baseTime+((event[1]-this.baseMs)>>>0)/1000;
+        if(when<this.ctx.currentTime || when>this.ctx.currentTime+.5) {this.baseMs=event[1];this.baseTime=this.ctx.currentTime+.06;when=this.baseTime;}
+        if(phoneRoute) this.schedule(event,when); this.cursor=event[0];
+      }
+      if(routeChanged) this.cursor=0;
+      await new Promise(resolve=>setTimeout(resolve,35));
+    }
+  }
+};
+window.phoneAudio=phoneAudio;
+$('phoneAudioStart').onclick=()=>phoneAudio.start();
+$('phoneAudioStop').onclick=()=>phoneAudio.stop();
+document.addEventListener('visibilitychange',()=>{if(document.hidden) phoneAudio.stop();});
+window.addEventListener('pagehide',()=>phoneAudio.stop());
+
+run(list); update(); setInterval(() => { if (!busy) update(); },700);
+</script></body></html>
