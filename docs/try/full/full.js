@@ -23,8 +23,9 @@ const sources = new Map();
 const pendingImports = new Map();
 let context, output, active = false, mask = 0, frameAt = 0, revision = -1;
 let frameBuffer = new ArrayBuffer(width * height * 2);
-let bankInFlight = false, pendingBank = 0;
+let bankInFlight = false, pendingBank = 0, startup = null;
 let storedSongs = getStored(songsKey, []);
+if (!Array.isArray(storedSongs)) storedSongs = [];
 
 function getStored(key, fallback) {
   try { return JSON.parse(localStorage.getItem(key)) ?? fallback; }
@@ -184,11 +185,28 @@ function finishBank() {
   if (pendingBank) queueBank(pendingBank);
 }
 
-function pushSong(song, persistent) {
+function pushSong(song) {
   const data = new TextEncoder().encode(JSON.stringify(song));
   if (data.length > 120 * 1024) throw new Error("曲谱超过固件的 120 KiB 限制。");
-  if (persistent) pendingImports.set(song.id, song);
   output.port.postMessage({ type: "import", id: song.id, bytes: data.buffer }, [data.buffer]);
+}
+
+function hasSong(id) {
+  return storedSongs.some(song => song?.id === id);
+}
+
+function importSong(song) {
+  PianoScore.validateSong(song);
+  if (hasSong(song.id) || pendingImports.has(song.id)) throw new Error("这首曲谱已在曲库中或正在导入。");
+  return new Promise((resolve, reject) => {
+    pushSong(song);
+    pendingImports.set(song.id, { song, resolve, reject });
+  });
+}
+
+function importNotice(song, persisted) {
+  return "已导入「" + song.title + "」。长按 / 后在「选择歌曲」中打开。" +
+    (persisted ? "" : "浏览器无法保存，刷新后需重新导入。");
 }
 
 function receive({ data }) {
@@ -199,6 +217,7 @@ function receive({ data }) {
     if (data.removed) {
       storedSongs = storedSongs.filter(song => song.id !== data.removed);
       save(songsKey, storedSongs);
+      document.dispatchEvent(new Event("piano-library-change"));
     }
   } else if (data.type === "bank") {
     if (!active && data.ok) {
@@ -206,31 +225,36 @@ function receive({ data }) {
       el("boot").hidden = true;
       el("import").disabled = false;
       buttons.forEach(button => { button.disabled = false; });
-      if (!Array.isArray(storedSongs)) storedSongs = [];
+
       for (const song of storedSongs.slice(0, 62)) {
-        try { pushSong(song, false); } catch { /* Skip invalid browser data. */ }
+        try { pushSong(song); } catch { /* Skip invalid browser data. */ }
       }
       requestAnimationFrame(drawFrame);
+      startup?.resolve();
+      startup = null;
     } else if (!active) fail("音色无法启动，请重试。");
     finishBank();
   } else if (data.type === "import") {
-    const song = pendingImports.get(data.id);
-    if (!song) return;
+    const pending = pendingImports.get(data.id);
+    if (!pending) return;
     pendingImports.delete(data.id);
     if (data.ok) {
-      storedSongs.push(song);
-      el("file-status").textContent = save(songsKey, storedSongs) ?
-        "已导入「" + song.title + "」。长按 / 后在「选择歌曲」中打开。" :
-        "已导入当前会话，浏览器存储空间不足。";
+      storedSongs.push(pending.song);
+      pending.resolve(save(songsKey, storedSongs));
+      document.dispatchEvent(new Event("piano-library-change"));
     } else {
-      el("file-status").textContent = data.error === "song library full" ?
-        "曲库已满，请先删除曲目。" : "固件无法读取这份曲谱，请检查格式。";
+      pending.reject(new Error(data.error === "song library full" ?
+        "曲库已满，请先删除曲目。" : "固件无法读取这份曲谱，请检查格式。"));
     }
-    el("import").disabled = false;
   }
 }
 
 function fail(message) {
+  const error = new Error(message);
+  startup?.reject(error);
+  startup = null;
+  for (const { reject } of pendingImports.values()) reject(error);
+  pendingImports.clear();
   releaseAll();
   active = false;
   buttons.forEach(button => { button.disabled = true; });
@@ -249,7 +273,17 @@ function fail(message) {
   revision = -1;
 }
 
-el("power").onclick = async () => {
+function powerOn() {
+  if (active) return Promise.resolve();
+  if (startup) return startup.promise;
+  startup = {};
+  startup.promise = new Promise((resolve, reject) => Object.assign(startup, { resolve, reject }));
+  const promise = startup.promise;
+  boot();
+  return promise;
+}
+
+async function boot() {
   el("power").disabled = true;
   el("boot-status").textContent = "正在载入琴端音色…";
   try {
@@ -278,7 +312,9 @@ el("power").onclick = async () => {
     output.connect(context.destination);
     output.port.postMessage({ type: "bank", instrument, bytes: bank }, [bank]);
   } catch (error) { fail(error.message || "声音无法启动，请重试。"); }
-};
+}
+
+el("power").onclick = () => powerOn().catch(() => {});
 
 el("import-form").onsubmit = async event => {
   event.preventDefault();
@@ -301,10 +337,10 @@ el("import-form").onsubmit = async event => {
       song = { id, bpm, title: file.name.slice(0, tag ? tag.index : -4).trim() || "自定义曲谱",
         notes: PianoScore.parseScore(text) };
     } else throw new Error("请选择 TXT 或琴端 JSON 曲谱。");
-    PianoScore.validateSong(song);
-    pushSong(song, true);
+    el("file-status").textContent = importNotice(song, await importSong(song));
   } catch (error) {
     el("file-status").textContent = error.message || "曲谱导入失败。";
-    el("import").disabled = false;
+  } finally {
+    el("import").disabled = !active;
   }
 };

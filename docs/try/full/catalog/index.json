@@ -1,0 +1,73 @@
+[
+  {
+    "id": "twinkle",
+    "title": "小星星",
+    "author": "法国传统旋律",
+    "aliases": [
+      "一闪一闪亮晶晶",
+      "Twinkle Twinkle Little Star",
+      "Ah vous dirai-je maman"
+    ],
+    "bpm": 96,
+    "polyphony": true
+  },
+  {
+    "id": "ode-to-joy",
+    "title": "欢乐颂",
+    "author": "贝多芬",
+    "aliases": [
+      "Ode to Joy",
+      "Beethoven",
+      "第九交响曲"
+    ],
+    "bpm": 100,
+    "polyphony": true
+  },
+  {
+    "id": "frere-jacques",
+    "title": "两只老虎",
+    "author": "法国传统旋律",
+    "aliases": [
+      "Frère Jacques",
+      "Frere Jacques",
+      "Are You Sleeping"
+    ],
+    "bpm": 96,
+    "polyphony": false
+  },
+  {
+    "id": "mary-lamb",
+    "title": "玛丽有只小羊羔",
+    "author": "传统童谣旋律",
+    "aliases": [
+      "Mary Had a Little Lamb",
+      "小羊羔",
+      "玛丽的小羊"
+    ],
+    "bpm": 90,
+    "polyphony": false
+  },
+  {
+    "id": "jingle-bells",
+    "title": "铃儿响叮当（副歌）",
+    "author": "詹姆斯·皮尔庞特",
+    "aliases": [
+      "Jingle Bells",
+      "James Lord Pierpont",
+      "雪橇歌"
+    ],
+    "bpm": 108,
+    "polyphony": false
+  },
+  {
+    "id": "row-your-boat",
+    "title": "划船歌",
+    "author": "英语传统童谣旋律",
+    "aliases": [
+      "Row Row Row Your Boat",
+      "划呀划小船"
+    ],
+    "bpm": 96,
+    "polyphony": false
+  }
+]

@@ -25,3 +25,5 @@ pwsh -File ./Build-TryAudio.ps1 -WasiBin '<WASI SDK bin>'
 完整版的状态机使用固件的 LocalControls、MenuController、Engine、ChordPractice、GameAssist 和 GameFlow。浏览器画布显示固件的菜单、简谱和音游渲染，AudioWorklet 使用 22.05 kHz 琴端混音。HPS 采样与快速试玩共用，默认音乐厅钢琴。浏览器文件导入与本地存储代替 SD／闪存和 Wi-Fi 传输，手机连接及外部扬声器切换在页面中由浏览器功能代替。
 
 同一个 Build-TryAudio.ps1 同时编译快速试玩和完整版，完整版文件输出到 [docs/try/full](../../docs/try/full/)。打开站点时使用 HTTPS 或 localhost。现有单文件离线包仍为快速试玩。
+
+更多见[网页在线曲库](在线曲库.md)。
