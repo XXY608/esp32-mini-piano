@@ -7,10 +7,10 @@
   <title>迷你电子琴 2.0 · 完整模拟</title>
   <link rel="icon" href="data:,">
   <link rel="stylesheet" href="../style.css?v=2">
-  <link rel="stylesheet" href="full.css?v=3">
+  <link rel="stylesheet" href="full.css?v=4">
   <script src="score-parser.js" defer></script>
   <script src="full.js?v=3" defer></script>
-  <script src="online-scores.js?v=2" defer></script>
+  <script src="online-scores.js?v=3" defer></script>
 </head>
 <body>
 <main>
@@ -49,20 +49,24 @@
     <details id="scores">
       <summary>导入曲谱 · 联网选曲</summary>
       <section class="score-import" aria-labelledby="online-title">
-        <h2 id="online-title">本站在线练习曲库</h2>
-        <p>搜索本站收录的练习谱，可直接加入曲库。支持中文名、英文名和作曲者。</p>
+        <h2 id="online-title">联网选曲</h2>
+        <p>搜索虫虫钢琴的曲谱，或从本站练习曲库选一首直接开弹。</p>
         <form id="online-form" role="search">
-          <label for="online-query">搜索本站曲谱</label>
-          <input type="search" id="online-query" maxlength="100" placeholder="例如：小星星、贝多芬、Jingle Bells">
+          <fieldset class="score-sources">
+            <legend>曲谱来源</legend>
+            <label><input type="radio" name="score-source" value="chongchong" checked> 虫虫钢琴</label>
+            <label><input type="radio" name="score-source" value="practice"> 本站练习曲</label>
+          </fieldset>
+          <label for="online-query">搜索曲名或作者</label>
+          <input type="search" id="online-query" maxlength="100" placeholder="例如 海屿你" enterkeyhint="search">
           <button type="submit">搜索</button>
         </form>
         <p id="online-status" role="status"></p>
-        <div id="online-alternatives" class="online-alternatives" hidden>
-          <a id="external-score-search" target="_blank" rel="noopener noreferrer">去虫虫钢琴搜索（新标签）</a>
-          <a href="#local-title" id="jump-to-local-score">导入已有曲谱</a>
-          <p>虫虫曲谱在对方网站查看。已有 TXT 简谱或琴端 JSON，可以直接导入。</p>
-        </div>
         <ul id="online-results" class="online-results"></ul>
+        <div id="online-alternatives" class="online-alternatives" hidden>
+          <a id="external-score-search" target="_blank" rel="noopener noreferrer">在虫虫钢琴查看全部结果</a>
+          <a href="#local-title" id="jump-to-local-score">导入已有曲谱</a>
+        </div>
       </section>
       <section class="score-import local-import" aria-labelledby="local-title">
         <h2 id="local-title">导入本地文件</h2>
