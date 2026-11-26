@@ -1,0 +1,4 @@
+GeneralUser GS 2.0.3 by S. Christian Collins: https://github.com/mrbumpy409/GeneralUser-GS
+Salamander Grand Piano by Alexander Holm, FreePats SF2 V3+20200602: https://freepats.zenvoid.org/Piano/acoustic-grand-piano.html
+Salamander: CC BY 3.0 https://creativecommons.org/licenses/by/3.0/
+Adaptation: FluidSynth-rendered, velocity 100, 22050 Hz mono, four-second root samples every two semitones, instrument-wide peak normalization. Derived samples, not the unmodified SF2 files.

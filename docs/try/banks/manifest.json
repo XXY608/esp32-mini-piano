@@ -1,0 +1,98 @@
+{
+  "format": "HPS1",
+  "velocity": 100,
+  "rate": 22050,
+  "secondsPerRoot": 4,
+  "rootStep": 2,
+  "files": [
+    {
+      "instrument": 3,
+      "name": "GS钢琴",
+      "file": "3.hps",
+      "bytes": 5468432,
+      "sha256": "2f0a4e3511509392add3a6af5e7f702404a14d16df68be28f3d832be9aa4f97b",
+      "source": "GeneralUser GS",
+      "program": 0,
+      "sourcePeak": 0.03529106453061104
+    },
+    {
+      "instrument": 4,
+      "name": "Salamander钢琴",
+      "file": "4.hps",
+      "bytes": 5468432,
+      "sha256": "4d913e73d160cd96432d496a392bb7e34f552b38b9d682b0131dcdc61fdbed62",
+      "source": "Salamander",
+      "program": 0,
+      "sourcePeak": 0.04217567294836044
+    },
+    {
+      "instrument": 5,
+      "name": "口琴",
+      "file": "5.hps",
+      "bytes": 5468432,
+      "sha256": "740e493bbf38b44fb7825d0a428445946b4769fa1c12bb4d719732df28101730",
+      "source": "GeneralUser GS",
+      "program": 22,
+      "sourcePeak": 0.03325165808200836
+    },
+    {
+      "instrument": 6,
+      "name": "长笛",
+      "file": "6.hps",
+      "bytes": 5468432,
+      "sha256": "270e103a6adfb46d12e98132e323ba8d11571930f74a31a96051d5a1e5687014",
+      "source": "GeneralUser GS",
+      "program": 73,
+      "sourcePeak": 0.05883084237575531
+    },
+    {
+      "instrument": 7,
+      "name": "小提琴",
+      "file": "7.hps",
+      "bytes": 5468432,
+      "sha256": "61c7045157166823376c3825e4d52e04a296ddce0cb323d23070379c4a8c363c",
+      "source": "GeneralUser GS",
+      "program": 40,
+      "sourcePeak": 0.04869241639971733
+    },
+    {
+      "instrument": 8,
+      "name": "木吉他",
+      "file": "8.hps",
+      "bytes": 5468432,
+      "sha256": "d10b39ec35609f89d8e9c0e7f457c3dc88d911633dcaaceb7f8f3597bb0949b0",
+      "source": "GeneralUser GS",
+      "program": 24,
+      "sourcePeak": 0.04235503822565079
+    },
+    {
+      "instrument": 9,
+      "name": "GS风琴",
+      "file": "9.hps",
+      "bytes": 5468432,
+      "sha256": "36007709ae91883118a082256ba6271c1cdec8abe8205b70ecfa0791d0075b20",
+      "source": "GeneralUser GS",
+      "program": 19,
+      "sourcePeak": 0.04965219274163246
+    },
+    {
+      "instrument": 10,
+      "name": "八音盒",
+      "file": "10.hps",
+      "bytes": 5468432,
+      "sha256": "8e26160f51339d78cfb906f374b6b027dd9175e006f71b9295e39e9ec753c9c2",
+      "source": "GeneralUser GS",
+      "program": 10,
+      "sourcePeak": 0.02509879507124424
+    },
+    {
+      "instrument": 11,
+      "name": "音乐厅钢琴",
+      "file": "11.hps",
+      "bytes": 5468432,
+      "sha256": "edb8089c33a1cd0b5725b73480b52f645b58aae7d068336ee0556c294885003f",
+      "source": "Salamander, CC BY 3.0, mono voicing, room reflections and pitch-level balancing",
+      "c4GainDb": -6.38
+    }
+  ]
+}

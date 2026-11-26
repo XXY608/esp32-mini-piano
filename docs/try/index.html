@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>迷你电子琴 2.0 · 网页试玩</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="try.js" defer></script>
+</head>
+<body>
+<main>
+  <header>
+    <a class="project" href="https://github.com/XXY608/esp32-mini-piano">ESP32 迷你电子琴</a>
+    <h1>弹一段音阶</h1>
+    <p class="intro">选「开始跟弹」，按亮起的键弹完一段。也可以自由弹奏，听听琴端采样的声音。</p>
+  </header>
+
+  <section class="instrument" aria-label="试玩电子琴">
+    <div class="display">
+      <div class="display-top"><span id="mode-label">跟弹练习</span><span id="progress" aria-live="off">0 / 13</span></div>
+      <div id="score" class="score" aria-hidden="true"></div>
+      <p id="status" role="status">点击「开始跟弹」启用声音。</p>
+    </div>
+    <div class="commands">
+      <button id="practice" class="primary">开始跟弹</button>
+      <button id="free">自由弹奏</button>
+    </div>
+    <div id="keys" class="keys" aria-label="七个音级键"></div>
+    <div id="modifiers" class="modifiers" aria-label="自由弹奏修饰键"></div>
+    <p class="shortcuts">键盘 <kbd>1</kbd>–<kbd>7</kbd> 弹琴。自由弹奏时，按住 <kbd>J</kbd> 降八度、<kbd>K</kbd> 升半音、<kbd>L</kbd> 升八度。</p>
+    <div class="sound-settings">
+      <label>音色 <select id="instrument">
+        <option value="11" selected>音乐厅钢琴</option>
+        <option value="3">GS 钢琴</option><option value="4">Salamander 钢琴</option>
+        <option value="5">口琴</option><option value="6">长笛</option>
+        <option value="7">小提琴</option><option value="8">木吉他</option>
+        <option value="9">GS 风琴</option><option value="10">八音盒</option>
+      </select></label>
+      <label class="volume">音量 <input id="volume" type="range" min="0" max="100" value="60"><output id="volume-value" for="volume">60%</output></label>
+      <label id="local-bank-label" hidden>载入 SD 卡音色 <input id="local-bank" type="file" accept=".hps"></label>
+    </div>
+  </section>
+
+  <footer>
+    <p>声音由 0.6.39 固件的混音代码与琴端 HPS 采样生成。最终听感也会受浏览器的输出设备影响。</p>
+    <a href="https://github.com/XXY608/esp32-mini-piano/tree/main/docs/try/banks">音色来源与授权</a>
+  </footer>
+</main>
+</body>
+</html>
