@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="在浏览器体验迷你电子琴的琴屏、十个按键、选曲、跟弹及自动播放。">
+  <title>迷你电子琴 2.0 · 完整模拟</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="../style.css?v=2">
+  <link rel="stylesheet" href="full.css?v=1">
+  <script src="score-parser.js" defer></script>
+  <script src="full.js?v=1" defer></script>
+</head>
+<body>
+<main>
+  <header>
+    <nav aria-label="迷你电子琴">
+      <a href="https://github.com/XXY608/esp32-mini-piano">ESP32 迷你电子琴</a>
+      <a href="../">快速试玩</a>
+    </nav>
+    <h1>完整模拟</h1>
+    <p class="intro">用和实琴一样的十个按键，选曲、跟弹和播放音乐。</p>
+  </header>
+
+  <section class="instrument console" aria-label="迷你电子琴模拟器">
+    <div class="screen">
+      <canvas id="screen" width="320" height="240" role="img" aria-label="0.6.39 琴屏"></canvas>
+      <div id="boot" class="boot">
+        <button type="button" class="primary" id="power">开机</button>
+        <p id="boot-status" role="status">默认载入「音乐厅钢琴」。</p>
+      </div>
+    </div>
+    <div id="keys" class="keys" aria-label="七个音级键"></div>
+    <div id="modifiers" class="modifiers" aria-label="三个修饰键"></div>
+    <p class="screen-state" id="screen-state" role="status">未开机</p>
+    <p class="shortcuts">单独长按 <kbd>/</kbd> 约 1.2 秒进菜单，短按退出。菜单里 <kbd>Z</kbd> / <kbd>X</kbd> 移动、<kbd>C</kbd> 确认、<kbd>V</kbd> 返回。自动播放时轻按 <kbd>,</kbd> 暂停或继续。</p>
+  </section>
+
+  <section class="extras" aria-label="练习和曲谱导入">
+    <details>
+      <summary>第一次怎么弹</summary>
+      <ol>
+        <li>开机后单独长按 <kbd>/</kbd>，进入「选择歌曲」。</li>
+        <li>选「和弦练习」。按 <kbd>C</kbd> 确认曲目，选「简单 单音」或「复杂 多音」后再确认。</li>
+        <li>选「开始演奏」跟弹，或选「播放音乐」听自动演奏。复杂多音的第一个和弦是 <kbd>Z</kbd> + <kbd>C</kbd> + <kbd>B</kbd>。</li>
+      </ol>
+    </details>
+    <details>
+      <summary>导入自己的曲谱</summary>
+      <form id="import-form">
+        <label>曲谱文件 <input type="file" id="file" accept=".txt,.json" required></label>
+        <label>TXT 的默认速度 <input type="number" id="bpm" min="20" max="400" value="120"></label>
+        <button type="submit" id="import" disabled>导入到曲库</button>
+      </form>
+      <p>支持琴端 JSON 和 UTF-8 TXT 简谱。TXT 文件名标注 BPM 时优先使用该值。曲谱保存在当前浏览器中。</p>
+      <p id="file-status" role="status"></p>
+    </details>
+  </section>
+
+  <footer>
+    <p>琴屏采用 0.6.39 固件的绘制代码，发声沿用琴端混音与 HPS 采样。此页面的曲库、设置和音频输出由当前浏览器管理。</p>
+    <a href="https://github.com/XXY608/esp32-mini-piano/tree/main/docs/try/banks">音色来源与授权</a>
+  </footer>
+</main>
+</body>
+</html>

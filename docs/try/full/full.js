@@ -1,0 +1,310 @@
+"use strict";
+
+const el = id => document.getElementById(id);
+const width = 320, height = 240;
+const canvas = el("screen").getContext("2d");
+const rgba = canvas.createImageData(width, height);
+const settingsKey = "mini-piano-full-settings-v1";
+const songsKey = "mini-piano-full-songs-v1";
+const layout = [
+  ["KeyZ", "Z", "1"], ["KeyX", "X", "2"], ["KeyC", "C", "3"], ["KeyV", "V", "4"],
+  ["KeyB", "B", "5"], ["KeyN", "N", "6"], ["KeyM", "M", "7"],
+  ["Comma", ",", "降八度"], ["Period", ".", "升半音"], ["Slash", "/", "升八度 / 菜单"]
+];
+const keyboard = new Map(layout.map(([code], index) => [code, index]));
+const menuNames = ["", "菜单首页", "开始演奏或播放音乐", "音色与音量", "节奏与调性",
+  "手机连接", "设备状态", "选择歌曲", "逐键检查", "演奏模式", "删除歌曲", "演奏界面"];
+const homeNames = ["选择歌曲", "演奏模式", "音色与音量", "演奏界面", "手机连接", "设备状态"];
+const launchNames = ["开始演奏", "播放音乐", "播放模式", "显示歌词"];
+const gameNames = ["", "单键伴奏", "自主节奏", "复杂 多音"];
+const modeNames = ["自由演奏", "自动播放", "跟弹练习", "自由演奏", "简单 单音", "节奏练习"];
+const buttons = [];
+const sources = new Map();
+const pendingImports = new Map();
+let context, output, active = false, mask = 0, frameAt = 0, revision = -1;
+let frameBuffer = new ArrayBuffer(width * height * 2);
+let bankInFlight = false, pendingBank = 0;
+let storedSongs = getStored(songsKey, []);
+
+function getStored(key, fallback) {
+  try { return JSON.parse(localStorage.getItem(key)) ?? fallback; }
+  catch { return fallback; }
+}
+
+function save(key, value) {
+  try { localStorage.setItem(key, JSON.stringify(value)); return true; }
+  catch { return false; }
+}
+
+function updateKey(source, index) {
+  if (index < 0) sources.delete(source);
+  else if (active) sources.set(source, index);
+  const next = [...sources.values()].reduce((bits, key) => bits | (1 << key), 0);
+  if (mask === next) return;
+  mask = next;
+  output?.port.postMessage({ type: "keys", mask });
+  updateKeyStyles();
+}
+
+function updateKeyStyles() {
+  buttons.forEach((button, i) => {
+    const held = Boolean(mask & (1 << i));
+    button.classList.toggle("held", held);
+    button.setAttribute("aria-pressed", String(held));
+  });
+}
+
+function releaseAll() {
+  sources.clear();
+  mask = 0;
+  output?.port.postMessage({ type: "keys", mask, reset: true });
+  updateKeyStyles();
+}
+
+for (const [i, [, shortcut, label]] of layout.entries()) {
+  const key = document.createElement("button");
+  const hint = document.createElement("span");
+  key.className = "key";
+  key.type = "button";
+  key.disabled = true;
+  key.textContent = label;
+  key.setAttribute("aria-label", i < 7 ? "琴键 " + label : label);
+  key.setAttribute("aria-keyshortcuts", shortcut);
+  hint.className = "key-hint";
+  hint.textContent = shortcut;
+  hint.setAttribute("aria-hidden", "true");
+  key.append(hint);
+  const pointers = new Map();
+  let counter = 0;
+  key.addEventListener("pointerdown", event => {
+    if (event.button !== 0 || !active) return;
+    key.setPointerCapture(event.pointerId);
+    const source = "pointer-" + i + "-" + ++counter;
+    pointers.set(event.pointerId, { source, since: performance.now() });
+    updateKey(source, i);
+    event.preventDefault();
+  });
+  for (const type of ["pointerup", "pointercancel", "lostpointercapture"]) {
+    key.addEventListener(type, event => {
+      const press = pointers.get(event.pointerId);
+      if (!press) return;
+      pointers.delete(event.pointerId);
+      const delay = type === "pointerup" && i < 7 ? 65 - (performance.now() - press.since) : 0;
+      if (delay > 0) setTimeout(() => updateKey(press.source, -1), delay);
+      else updateKey(press.source, -1);
+    });
+  }
+  key.addEventListener("click", event => {
+    if (event.detail || !active) return;
+    const source = "activation-" + i + "-" + ++counter;
+    updateKey(source, i);
+    setTimeout(() => updateKey(source, -1), i === 9 ? 1300 : 90);
+  });
+  el(i < 7 ? "keys" : "modifiers").append(key);
+  buttons.push(key);
+}
+
+document.addEventListener("keydown", event => {
+  const key = keyboard.get(event.code);
+  if (key === undefined || !active || event.altKey || event.ctrlKey || event.metaKey ||
+      event.target.closest("input, select, textarea, [contenteditable]")) return;
+  event.preventDefault();
+  if (!event.repeat) updateKey(event.code, key);
+});
+document.addEventListener("keyup", event => updateKey(event.code, -1));
+window.addEventListener("blur", releaseAll);
+document.addEventListener("visibilitychange", () => { if (document.hidden) releaseAll(); });
+
+function paint(buffer, state) {
+  const colors = new Uint16Array(buffer);
+  const pixels = rgba.data;
+  for (let i = 0, offset = 0; i < colors.length; i++, offset += 4) {
+    const value = colors[i];
+    const r = value >> 11, g = (value >> 5) & 63, b = value & 31;
+    pixels[offset] = (r << 3) | (r >> 2);
+    pixels[offset + 1] = (g << 2) | (g >> 4);
+    pixels[offset + 2] = (b << 3) | (b >> 2);
+    pixels[offset + 3] = 255;
+  }
+  canvas.putImageData(rgba, 0, 0);
+  const [menu, home, row, mode, game, , paused, , , volume, instrument, bpm, transpose, flags, saved] = state;
+  const description = menu ? menuNames[menu] + (menu === 1 ? " · " + homeNames[home] :
+    menu === 2 ? " · " + launchNames[row] : "") :
+    (gameNames[game] || modeNames[mode]) + (paused ? " · 已暂停" : "");
+  const status = description + " · 音量 " + volume + "%";
+  if (el("screen-state").textContent !== status) el("screen-state").textContent = status;
+  if (saved !== revision) {
+    if (revision !== -1 || saved !== 0) save(settingsKey, { volume, instrument, bpm, transpose, flags });
+    revision = saved;
+  }
+}
+
+function drawFrame(now) {
+  if (!active) return;
+  if (frameBuffer && now - frameAt >= 42) {
+    frameAt = now;
+    output.port.postMessage({ type: "frame", buffer: frameBuffer }, [frameBuffer]);
+    frameBuffer = null;
+  }
+  requestAnimationFrame(drawFrame);
+}
+
+async function bytes(url) {
+  const response = await fetch(url);
+  if (!response.ok) throw new Error("资源载入失败，请重试。");
+  return response.arrayBuffer();
+}
+
+async function loadBank(id) {
+  const bank = await bytes("../banks/" + id + ".hps");
+  const header = new DataView(bank);
+  const words = [22050, 36, 2, 31, 88200, id, 0];
+  if (bank.byteLength !== 5468432 || header.getUint32(0) !== 0x48505331 ||
+      !words.every((value, i) => header.getUint32(4 + 4 * i, true) === value)) {
+    throw new Error("琴端采样格式不匹配。");
+  }
+  return bank;
+}
+
+function queueBank(instrument) {
+  pendingBank = instrument;
+  if (bankInFlight) return;
+  bankInFlight = true;
+  pendingBank = 0;
+  loadBank(instrument).then(bank => {
+    output.port.postMessage({ type: "bank", instrument, bytes: bank }, [bank]);
+  }).catch(() => {
+    output?.port.postMessage({ type: "bank-failed" });
+    finishBank();
+  });
+}
+
+function finishBank() {
+  bankInFlight = false;
+  if (pendingBank) queueBank(pendingBank);
+}
+
+function pushSong(song, persistent) {
+  const data = new TextEncoder().encode(JSON.stringify(song));
+  if (data.length > 120 * 1024) throw new Error("曲谱超过固件的 120 KiB 限制。");
+  if (persistent) pendingImports.set(song.id, song);
+  output.port.postMessage({ type: "import", id: song.id, bytes: data.buffer }, [data.buffer]);
+}
+
+function receive({ data }) {
+  if (data.type === "frame") {
+    frameBuffer = data.buffer;
+    paint(frameBuffer, data.state);
+    if (data.bank) queueBank(data.bank);
+    if (data.removed) {
+      storedSongs = storedSongs.filter(song => song.id !== data.removed);
+      save(songsKey, storedSongs);
+    }
+  } else if (data.type === "bank") {
+    if (!active && data.ok) {
+      active = true;
+      el("boot").hidden = true;
+      el("import").disabled = false;
+      buttons.forEach(button => { button.disabled = false; });
+      if (!Array.isArray(storedSongs)) storedSongs = [];
+      for (const song of storedSongs.slice(0, 62)) {
+        try { pushSong(song, false); } catch { /* Skip invalid browser data. */ }
+      }
+      requestAnimationFrame(drawFrame);
+    } else if (!active) fail("音色无法启动，请重试。");
+    finishBank();
+  } else if (data.type === "import") {
+    const song = pendingImports.get(data.id);
+    if (!song) return;
+    pendingImports.delete(data.id);
+    if (data.ok) {
+      storedSongs.push(song);
+      el("file-status").textContent = save(songsKey, storedSongs) ?
+        "已导入「" + song.title + "」。长按 / 后在「选择歌曲」中打开。" :
+        "已导入当前会话，浏览器存储空间不足。";
+    } else {
+      el("file-status").textContent = data.error === "song library full" ?
+        "曲库已满，请先删除曲目。" : "固件无法读取这份曲谱，请检查格式。";
+    }
+    el("import").disabled = false;
+  }
+}
+
+function fail(message) {
+  releaseAll();
+  active = false;
+  buttons.forEach(button => { button.disabled = true; });
+  el("import").disabled = true;
+  el("screen-state").textContent = "未开机";
+  el("power").disabled = false;
+  el("boot").hidden = false;
+  el("boot-status").textContent = message;
+  output?.disconnect();
+  output = null;
+  context?.close().catch(() => {});
+  context = null;
+  frameBuffer = new ArrayBuffer(width * height * 2);
+  bankInFlight = false;
+  pendingBank = 0;
+  revision = -1;
+}
+
+el("power").onclick = async () => {
+  el("power").disabled = true;
+  el("boot-status").textContent = "正在载入琴端音色…";
+  try {
+    if (!window.isSecureContext || !window.AudioWorkletNode || !window.AudioContext) {
+      throw new Error("请在支持网页音频的浏览器中打开 HTTPS 页面。");
+    }
+    context = new AudioContext({ sampleRate: 22050, latencyHint: "interactive" });
+    if (context.sampleRate !== 22050) throw new Error("此浏览器不支持 22.05 kHz 音频。");
+    const saved = getStored(settingsKey, {});
+    const settings = {
+      bpm: Number.isInteger(saved.bpm) ? saved.bpm : 120,
+      transpose: Number.isInteger(saved.transpose) ? saved.transpose : 0,
+      volume: Number.isInteger(saved.volume) ? saved.volume : 60,
+      flags: Number.isInteger(saved.flags) ? saved.flags : 16
+    };
+    const instrument = Number.isInteger(saved.instrument) && saved.instrument >= 3 && saved.instrument <= 11 ? saved.instrument : 11;
+    const [module, bank] = await Promise.all([
+      bytes("piano.wasm?v=1").then(WebAssembly.compile), loadBank(instrument),
+      context.audioWorklet.addModule("worklet.js?v=1"), context.resume()
+    ]);
+    output = new AudioWorkletNode(context, "full-piano", {
+      processorOptions: { module, settings }, numberOfInputs: 0, numberOfOutputs: 1, outputChannelCount: [2]
+    });
+    output.port.onmessage = receive;
+    output.onprocessorerror = () => fail("音频中断，请重新开机。");
+    output.connect(context.destination);
+    output.port.postMessage({ type: "bank", instrument, bytes: bank }, [bank]);
+  } catch (error) { fail(error.message || "声音无法启动，请重试。"); }
+};
+
+el("import-form").onsubmit = async event => {
+  event.preventDefault();
+  const file = el("file").files[0];
+  if (!file || !active) return;
+  el("import").disabled = true;
+  try {
+    if (file.size > 120 * 1024) throw new Error("曲谱超过 120 KiB。");
+    const text = await file.text();
+    const id = "web-" + crypto.randomUUID();
+    let song;
+    if (/\.json$/i.test(file.name)) {
+      song = JSON.parse(text.replace(/^\uFEFF/, ""));
+      if (!song || typeof song !== "object" || Array.isArray(song)) throw new Error("请选择琴端歌曲 JSON。");
+      song.id = id;
+    } else if (/\.txt$/i.test(file.name)) {
+      const tag = /[_\s]*(?:源谱\s*)?BPM\s*[:：]\s*(\d+)(?=\.txt$)/i.exec(file.name);
+      const bpm = tag ? Number(tag[1]) : Number(el("bpm").value);
+      if (!Number.isInteger(bpm) || bpm < 20 || bpm > 400) throw new Error("BPM 必须在 20 至 400 之间。");
+      song = { id, bpm, title: file.name.slice(0, tag ? tag.index : -4).trim() || "自定义曲谱",
+        notes: PianoScore.parseScore(text) };
+    } else throw new Error("请选择 TXT 或琴端 JSON 曲谱。");
+    PianoScore.validateSong(song);
+    pushSong(song, true);
+  } catch (error) {
+    el("file-status").textContent = error.message || "曲谱导入失败。";
+    el("import").disabled = false;
+  }
+};

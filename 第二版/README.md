@@ -6,7 +6,7 @@
 
 我沿用了第一版的 PCB 和部分部件，也有了新的琴键与外观。
 
-[网页试玩](https://xxy608.github.io/esp32-mini-piano/try/) · [快速上手与设置](快速上手.md) · [界面展示](界面展示/README.md) · [制作资料](制作资料.md) · [固件源码](固件/Board2_1Piano/README.md) · [返回首页](../README.md)
+[快速试玩](https://xxy608.github.io/esp32-mini-piano/try/) · [完整模拟](https://xxy608.github.io/esp32-mini-piano/try/full/) · [快速上手与设置](快速上手.md) · [界面展示](界面展示/README.md) · [制作资料](制作资料.md) · [固件源码](固件/Board2_1Piano/README.md) · [返回首页](../README.md)
 
 </div>
 
