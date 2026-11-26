@@ -98,7 +98,7 @@
         const signal = AbortSignal.any([searchRequest.signal, AbortSignal.timeout(15000)]);
         const data = await fetchJSON(url, 64 * 1024, signal);
         if (version !== searchVersion) return;
-        if (data?.query !== keyword || !Array.isArray(data.results) || data.results.length > 20 ||
+        if (!Array.isArray(data?.results) || data.results.length > 20 ||
             !data.results.every(entry => entry && /^\d{1,12}$/.test(entry.id) && typeof entry.title === "string" &&
                 entry.title && typeof entry.artist === "string")) throw new Error("搜索结果格式无效。");
         render(data.results, true);
