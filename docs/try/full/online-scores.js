@@ -5,6 +5,8 @@
   const status = el("online-status");
   const panel = el("scores");
   const query = el("online-query");
+  const alternatives = el("online-alternatives");
+  const external = el("external-score-search");
   const normalize = value => value.normalize("NFKC").toLowerCase();
   let indexRequest, busyId = null, searchVersion = 0;
 
@@ -63,7 +65,9 @@
 
   async function search() {
     const version = ++searchVersion;
-    const terms = normalize(query.value).trim().split(/\s+/u).filter(Boolean);
+    const keyword = query.value.trim();
+    const terms = normalize(keyword).split(/\s+/u).filter(Boolean);
+    alternatives.hidden = true;
     status.textContent = "正在载入在线曲库…";
     try {
       const entries = await index();
@@ -74,7 +78,11 @@
       });
       render(matches);
       status.textContent = matches.length ? (terms.length ? "找到 " + matches.length + " 首曲谱。" : "精选练习曲 · " + matches.length + " 首") :
-        "曲库里没有找到这首曲，可以换关键词或导入本地曲谱。";
+                "本站练习曲库暂未收录「" + keyword + "」。";
+      if (!matches.length && keyword) {
+        external.href = "https://www.gangqinpu.com/search/0_" + encodeURIComponent(keyword) + "_1.htm";
+        alternatives.hidden = false;
+      }
     } catch {
       if (version !== searchVersion) return;
       results.replaceChildren();
@@ -104,6 +112,7 @@
   panel.addEventListener("toggle", () => {
     if (panel.open && !indexRequest) search();
   });
+  el("jump-to-local-score").addEventListener("click", () => requestAnimationFrame(() => el("file").focus()));
   document.addEventListener("piano-library-change", refreshButtons);
   if (panel.open) search();
 }
