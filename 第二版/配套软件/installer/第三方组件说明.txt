@@ -1,0 +1,13 @@
+本安装版随附独立 Python 3.12 运行库、CPU 音频推理组件和模型。
+各 Python 组件的版本见 work/lyrics-alignment/requirements-frozen.txt；原始许可证和版权声明随各包及 *.dist-info/licenses 目录保留。
+
+Python：work/lyrics-alignment/python/LICENSE.txt（PSF 及随附条款）
+TIFA：work/lyrics-alignment/TIFA-main/LICENSE（Team OpenVPI，MIT）
+TIFA-1.0：模型配置、词典及说明在 work/lyrics-alignment/models/TIFA-1.0。
+Demucs、HTDemucs：Meta / Alexandre Défossez，MIT；相关包与权重随附。
+torchcrepe：MIT；其权重包含在包内。
+FFmpeg：imageio_ffmpeg/binaries 中的独立音频工具；其许可证随包保留。
+Microsoft .NET：self-contained Windows Desktop runtime，许可证见随附 dotnet-LICENSE 与 THIRD-PARTY-NOTICES。
+Microsoft Visual C++ release CRT：未经修改的微软签名运行库，仅供本应用使用。再分发规则：https://learn.microsoft.com/en-us/visualstudio/releases/2026/redistribution
+
+安装包不包含用户录音、生成曲谱、账号凭据或历史处理任务。使用时会向歌词／录音／参考谱网站发送检索请求，并下载所选来源。程序不会调用 GPT/OpenAI 进行配词；无需 OpenAI 账号或密钥。

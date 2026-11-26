@@ -1,0 +1,33 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="TxtScoreImporter.cs" />
+    <Compile Include="DeviceContracts.cs" />
+    <Compile Include="DeviceAudio.cs" />
+    <Compile Include="MobileLyrics.cs" />
+    <Compile Include="MobileDeviceLyrics.cs" />
+    <Compile Include="MobileLyricsLookup.cs" />
+    <Compile Include="NeteaseLyrics.cs" />
+    <Compile Include="MobileScoreFiles.cs" />
+    <Compile Include="MobileScoreClient.cs" />
+    <Compile Include="..\..\..\MidiImporter.cs" Link="Shared\MidiImporter.cs" />
+    <Compile Include="..\..\..\MusicXmlImporter.cs" Link="Shared\MusicXmlImporter.cs" />
+    <Compile Include="..\..\..\OnlineScoreClient.cs" Link="Shared\OnlineScoreClient.cs" />
+    <Compile Include="..\..\..\CcmzImporter.cs" Link="Shared\CcmzImporter.cs" />
+    <Compile Include="..\..\..\AudioInstrument.cs" Link="Shared\AudioInstrument.cs" />
+    <Compile Include="..\..\..\LocalAudioRenderer.cs" Link="Shared\LocalAudioRenderer.cs" />
+    <Compile Include="..\..\..\PracticeModeModel.cs" Link="Shared\PracticeModeModel.cs" />
+    <!-- Link the existing parser implementation so Windows and Android keep one rule set. -->
+    <Compile Include="..\..\..\ScoreParser.cs" Link="Shared\ScoreParser.cs" />
+    <Compile Include="..\..\..\ImportedScore.cs" Link="Shared\ImportedScore.cs" />
+    <Compile Include="..\..\..\ScoreTiming.cs" Link="Shared\ScoreTiming.cs" />
+    <Compile Include="..\..\..\ScoreLyrics.cs" Link="Shared\ScoreLyrics.cs" />
+    <Compile Include="..\..\..\BpmFileName.cs" Link="Shared\BpmFileName.cs" />
+  </ItemGroup>
+</Project>

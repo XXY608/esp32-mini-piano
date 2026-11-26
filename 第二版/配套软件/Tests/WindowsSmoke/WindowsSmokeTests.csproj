@@ -1,0 +1,56 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <DefineConstants>$(DefineConstants);PIANO_SOUNDFONTS</DefineConstants>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <StartupObject>HarmonicaPlayer.WindowsSmokeTests</StartupObject>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="WindowsSmokeTests.cs" />
+    <Compile Include="../../AudioInstrument.cs" Link="Source/AudioInstrument.cs" />
+    <Compile Include="../../SoundFontAudio.cs" Link="Source/SoundFontAudio.cs" />
+    <Compile Include="../../AudioLyricsAligner.cs" Link="Source/AudioLyricsAligner.cs" />
+    <Compile Include="../../AppSettings.cs" Link="Source/AppSettings.cs" />
+    <Compile Include="../../BpmFileName.cs" Link="Source/BpmFileName.cs" />
+    <Compile Include="../../CcmzImporter.cs" Link="Source/CcmzImporter.cs" />
+    <Compile Include="../../HotkeyDialog.cs" Link="Source/HotkeyDialog.cs" />
+    <Compile Include="../../HotkeySettings.cs" Link="Source/HotkeySettings.cs" />
+    <Compile Include="../../ImportedScore.cs" Link="Source/ImportedScore.cs" />
+    <Compile Include="../../ScoreTiming.cs" Link="Source/ScoreTiming.cs" />
+    <Compile Include="../../Lyrics.cs" Link="Source/Lyrics.cs" />
+    <Compile Include="../../ScoreLyrics.cs" Link="Source/ScoreLyrics.cs" />
+    <Compile Include="../../LyricsBindingDialog.cs" Link="Source/LyricsBindingDialog.cs" />
+    <Compile Include="../../LyricsLayoutDialog.cs" Link="Source/LyricsLayoutDialog.cs" />
+    <Compile Include="../../LyricsWindow.cs" Link="Source/LyricsWindow.cs" />
+    <Compile Include="../../LocalAudioRenderer.cs" Link="Source/LocalAudioRenderer.cs" />
+    <Compile Include="../../LocalAudioWindow.cs" Link="Source/LocalAudioWindow.cs" />
+    <Compile Include="../../MidiImporter.cs" Link="Source/MidiImporter.cs" />
+    <Compile Include="../../MusicXmlImporter.cs" Link="Source/MusicXmlImporter.cs" />
+    <Compile Include="../../NativeHotkeys.cs" Link="Source/NativeHotkeys.cs" />
+    <Compile Include="../../NativeInput.cs" Link="Source/NativeInput.cs" />
+    <Compile Include="../../OnlineScoreClient.cs" Link="Source/OnlineScoreClient.cs" />
+    <Compile Include="../../OnlineBridge.cs" />
+    <Compile Include="../../Mobile/src/HarmonicaPlayer.Mobile.Core/DeviceContracts.cs" />
+    <Compile Include="../../Mobile/src/HarmonicaPlayer.Mobile.Core/DeviceAudio.cs" />
+    <Compile Include="../../Mobile/src/HarmonicaPlayer.Mobile.Core/MobileDeviceLyrics.cs" />
+    <Compile Include="../../Mobile/src/HarmonicaPlayer.Mobile.Core/MobileLyrics.cs" />
+    <Using Include="System.Net.Http" />
+    <Using Include="System.IO" />
+    <Compile Include="../../OnlineScoreWindow.cs" Link="Source/OnlineScoreWindow.cs" />
+    <Compile Include="../../PracticeAudioEngine.cs" Link="Source/PracticeAudioEngine.cs" />
+    <Compile Include="../../PracticeModeModel.cs" Link="Source/PracticeModeModel.cs" />
+    <Compile Include="../../PracticeModeWindow.cs" Link="Source/PracticeModeWindow.cs" />
+    <Compile Include="../../SimulatorAudio.cs" Link="Source/SimulatorAudio.cs" />
+    <Compile Include="../../MobileSimulatorWindow.cs" Link="Source/MobileSimulatorWindow.cs" />
+    <Compile Include="../../Program.cs" Link="Source/Program.cs" />
+    <Compile Include="../../ScoreParser.cs" Link="Source/ScoreParser.cs" />
+    <Compile Include="../../SettingsWriter.cs" Link="Source/SettingsWriter.cs" />
+    <Compile Include="../../SingleInstance.cs" Link="Source/SingleInstance.cs" />
+  </ItemGroup>
+  <ItemGroup><PackageReference Include="NAudio" Version="2.2.1" /><PackageReference Include="Microsoft.Web.WebView2" Version="1.0.3595.46" /></ItemGroup>
+</Project>

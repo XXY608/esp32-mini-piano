@@ -1,0 +1,59 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <DefineConstants>$(DefineConstants);PIANO_SOUNDFONTS</DefineConstants>
+    <Version>2.1</Version>
+    <AssemblyName>电子琴</AssemblyName>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="AudioInstrument.cs" />
+    <Compile Include="SoundFontAudio.cs" />
+    <Compile Include="AudioLyricsAligner.cs" />
+    <Compile Include="AppSettings.cs" />
+    <Compile Include="BpmFileName.cs" />
+    <Compile Include="CcmzImporter.cs" />
+    <Compile Include="HotkeyDialog.cs" />
+    <Compile Include="HotkeySettings.cs" />
+    <Compile Include="ImportedScore.cs" />
+    <Compile Include="ScoreTiming.cs" />
+    <Compile Include="Lyrics.cs" />
+    <Compile Include="ScoreLyrics.cs" />
+    <Compile Include="LyricsBindingDialog.cs" />
+    <Compile Include="LyricsLayoutDialog.cs" />
+    <Compile Include="LyricsWindow.cs" />
+    <Compile Include="LocalAudioRenderer.cs" />
+    <Compile Include="LocalAudioWindow.cs" />
+    <Compile Include="MidiImporter.cs" />
+    <Compile Include="MusicXmlImporter.cs" />
+    <Compile Include="NativeHotkeys.cs" />
+    <Compile Include="NativeInput.cs" />
+    <Compile Include="OnlineScoreClient.cs" />
+    <Compile Include="OnlineBridge.cs" />
+    <Compile Include="Mobile\src\HarmonicaPlayer.Mobile.Core\DeviceContracts.cs" />
+    <Compile Include="Mobile\src\HarmonicaPlayer.Mobile.Core\DeviceAudio.cs" />
+    <Using Include="System.Net.Http" />
+    <Using Include="System.IO" />
+    <Compile Include="Mobile\src\HarmonicaPlayer.Mobile.Core\MobileDeviceLyrics.cs" />
+    <Compile Include="Mobile\src\HarmonicaPlayer.Mobile.Core\MobileLyrics.cs" />
+    <Compile Include="OnlineScoreWindow.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="PracticeModeModel.cs" />
+    <Compile Include="PracticeAudioEngine.cs" />
+    <Compile Include="PracticeModeWindow.cs" />
+    <Compile Include="SimulatorAudio.cs" />
+    <Compile Include="MobileSimulatorWindow.cs" />
+    <EmbeddedResource Include="固件屏幕模拟_开发候选.html" LogicalName="HarmonicaPlayer.MobileSimulator.html" />
+    <Compile Include="ScoreParser.cs" />
+    <Compile Include="SettingsWriter.cs" />
+    <Compile Include="SingleInstance.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="NAudio" Version="2.2.1" /><PackageReference Include="Microsoft.Web.WebView2" Version="1.0.3595.46" />
+  </ItemGroup>
+</Project>

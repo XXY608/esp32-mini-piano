@@ -1,0 +1,297 @@
+{
+  "hardwareValidated": false,
+  "fqbn": "esp32:esp32:esp32s3:FlashSize=16M,FlashMode=qio,PSRAM=opi,PartitionScheme=default,CDCOnBoot=default,USBMode=hwcdc",
+  "sdSamples": {
+    "format": "HPS1",
+    "velocity": 100,
+    "rate": 22050,
+    "secondsPerRoot": 4,
+    "rootStep": 2,
+    "files": [
+      {
+        "instrument": 3,
+        "name": "GS钢琴",
+        "file": "3.hps",
+        "bytes": 5468432,
+        "sha256": "2f0a4e3511509392add3a6af5e7f702404a14d16df68be28f3d832be9aa4f97b",
+        "source": "GeneralUser GS",
+        "program": 0,
+        "sourcePeak": 0.03529106453061104
+      },
+      {
+        "instrument": 4,
+        "name": "Salamander钢琴",
+        "file": "4.hps",
+        "bytes": 5468432,
+        "sha256": "4d913e73d160cd96432d496a392bb7e34f552b38b9d682b0131dcdc61fdbed62",
+        "source": "Salamander",
+        "program": 0,
+        "sourcePeak": 0.04217567294836044
+      },
+      {
+        "instrument": 5,
+        "name": "口琴",
+        "file": "5.hps",
+        "bytes": 5468432,
+        "sha256": "740e493bbf38b44fb7825d0a428445946b4769fa1c12bb4d719732df28101730",
+        "source": "GeneralUser GS",
+        "program": 22,
+        "sourcePeak": 0.03325165808200836
+      },
+      {
+        "instrument": 6,
+        "name": "长笛",
+        "file": "6.hps",
+        "bytes": 5468432,
+        "sha256": "270e103a6adfb46d12e98132e323ba8d11571930f74a31a96051d5a1e5687014",
+        "source": "GeneralUser GS",
+        "program": 73,
+        "sourcePeak": 0.05883084237575531
+      },
+      {
+        "instrument": 7,
+        "name": "小提琴",
+        "file": "7.hps",
+        "bytes": 5468432,
+        "sha256": "61c7045157166823376c3825e4d52e04a296ddce0cb323d23070379c4a8c363c",
+        "source": "GeneralUser GS",
+        "program": 40,
+        "sourcePeak": 0.04869241639971733
+      },
+      {
+        "instrument": 8,
+        "name": "木吉他",
+        "file": "8.hps",
+        "bytes": 5468432,
+        "sha256": "d10b39ec35609f89d8e9c0e7f457c3dc88d911633dcaaceb7f8f3597bb0949b0",
+        "source": "GeneralUser GS",
+        "program": 24,
+        "sourcePeak": 0.04235503822565079
+      },
+      {
+        "instrument": 9,
+        "name": "GS风琴",
+        "file": "9.hps",
+        "bytes": 5468432,
+        "sha256": "36007709ae91883118a082256ba6271c1cdec8abe8205b70ecfa0791d0075b20",
+        "source": "GeneralUser GS",
+        "program": 19,
+        "sourcePeak": 0.04965219274163246
+      },
+      {
+        "instrument": 10,
+        "name": "八音盒",
+        "file": "10.hps",
+        "bytes": 5468432,
+        "sha256": "8e26160f51339d78cfb906f374b6b027dd9175e006f71b9295e39e9ec753c9c2",
+        "source": "GeneralUser GS",
+        "program": 10,
+        "sourcePeak": 0.02509879507124424
+      },
+      {
+        "instrument": 11,
+        "name": "音乐厅钢琴",
+        "file": "11.hps",
+        "bytes": 5468432,
+        "sha256": "edb8089c33a1cd0b5725b73480b52f645b58aae7d068336ee0556c294885003f",
+        "source": "Salamander, CC BY 3.0, mono voicing, room reflections and pitch-level balancing",
+        "c4GainDb": -6.38
+      }
+    ]
+  },
+  "sources": [
+    {
+      "sha256": "0e0becb3bd914f9cd2a24af1b949407687bbcbcce8ee127036cdc3ce1afc5f8a",
+      "name": "App.cpp"
+    },
+    {
+      "sha256": "1aeb3ffb3c2d68e271b412ea611fc334460dab28eaae04ad1ae0d79ea2bca2f3",
+      "name": "App.h"
+    },
+    {
+      "sha256": "a7adce25f388215b8d376c3d78fd180b71094643d51968ef456c9cfeb35677a0",
+      "name": "AudioEvents.h"
+    },
+    {
+      "sha256": "93a34e5b7481e90ce0d0aa082d764175d1ba4a5d9498ab6f9598a453a9e633b9",
+      "name": "AudioOutput.h"
+    },
+    {
+      "sha256": "64c7fbb59b948f2780b23204a8873c05ac4dd11e26de9d0f94e2fb5fd11ee9b6",
+      "name": "AudioSynth.h"
+    },
+    {
+      "sha256": "79144d47e0f63e81de954889873d93de890d0047d4b844b633932e00e3a44ec3",
+      "name": "Board2_1Config.h"
+    },
+    {
+      "sha256": "e4990f0f5d9fa3e6ab36d3b635e1850963e88bf5824c4790f97e9510a3493ed6",
+      "name": "Board2_1Piano.ino"
+    },
+    {
+      "sha256": "8e08833b8e3dfb98191db30902d3001ac88a6c6ecc1fe9ae19754c8318d149cd",
+      "name": "BuiltinSongs.h"
+    },
+    {
+      "sha256": "91e8982a4b3c8e20a760a8ea49247a3968fd33a09a53e1a27f7015ee93b4a191",
+      "name": "ChineseFont.h"
+    },
+    {
+      "sha256": "ed699f4c3d3c7a9b83fd91f6e5dbbea7003dbe5589a52a61b57ccccd44f38a52",
+      "name": "ChineseText.h"
+    },
+    {
+      "sha256": "ed732ee3650b8142f9868a123c02c59585a94970e496eae6553eeaf21039f715",
+      "name": "ChordPractice.h"
+    },
+    {
+      "sha256": "0e67c8b0e26c40858a2f7e0e17117bf6032845094f2f632fdd9b836017f29859",
+      "name": "DeviceRuntime.cpp"
+    },
+    {
+      "sha256": "d8c0ca3e2bf80d6380ed36c11bbbcf785ad23819f7cbf23ebdc20f9551e64abf",
+      "name": "DeviceRuntime.h"
+    },
+    {
+      "sha256": "acbde887f36c082bf05dcb39964153f146121c446a90bdcd2ff5e440ccc68a7b",
+      "name": "DisplayText.h"
+    },
+    {
+      "sha256": "92bfa541c29a07d3fe8336c712ac2f261b64c29493471fa5636b15f2bbeb66fe",
+      "name": "FrameSurface.h"
+    },
+    {
+      "sha256": "1f0110a73a0245f6960b140c1424b06919b0de2c0e93deb65d7a014e3ee9eb1a",
+      "name": "GameAssist.h"
+    },
+    {
+      "sha256": "5f9f5d6d7e94bf3608142004afb7c94234535b57e45f916ecae1fe2129e58f4b",
+      "name": "GameFlow.h"
+    },
+    {
+      "sha256": "66d8978e468efb1a58bf43f1ada7284fcb6bcd75b6f2729cb7712677647f5734",
+      "name": "GameHoldBonus.h"
+    },
+    {
+      "sha256": "6223d0ff84fc746207a05d78eab51204beee61c0a5f414e8128a7418d507391d",
+      "name": "GameScreen.h"
+    },
+    {
+      "sha256": "d2efcfff08d8fd5863bfae91cd525011118a864a2f42c918921ddf100cade739",
+      "name": "GuidedGame.h"
+    },
+    {
+      "sha256": "dc4a4bc8ee6d213e5b6fbd54e5dbbd32aae2e10dbd8c0e7a4702b1a97670e8c6",
+      "name": "GuidedPerformance.h"
+    },
+    {
+      "sha256": "39870d7e27ed1e934e2efaeadda8eedb336d178e2018641a3b64fe66c2ff0ef4",
+      "name": "LocalControls.h"
+    },
+    {
+      "sha256": "219d0fb65f2825b5cd6de1b57df486eb4c4abffe927f2fd16e0f556df8a8f224",
+      "name": "ManualMixer.h"
+    },
+    {
+      "sha256": "a5e0f62c711bc00bf6ed642e05df0c40630c3338cfa2ce341e6deb6049ec1001",
+      "name": "ManualVoices.h"
+    },
+    {
+      "sha256": "18b2f5e69d2c82ef4fe09bb714a82871482e9742ef6fc28ebccfb6d512a24fea",
+      "name": "MenuModel.h"
+    },
+    {
+      "sha256": "044c931e8246e25d23032736da0a2a9804e75fafad4dc45067b89978bc8f686c",
+      "name": "MenuScreen.h"
+    },
+    {
+      "sha256": "a6bd617401c286f52763b944f53b0b56c8a1fbad82dea1a2f9418520014d8a65",
+      "name": "MidiDisplay.h"
+    },
+    {
+      "sha256": "c05ca4305bb73264b1d8ad6e4125d18f0a7943591ea28bf2f3377e96f64117a0",
+      "name": "NotationLayout.h"
+    },
+    {
+      "sha256": "8e685bc74651542c24576683dcc0b01c57bfae87d136b6c0dcdfdc0793d8e5d5",
+      "name": "partitions.csv"
+    },
+    {
+      "sha256": "a2ba44cea65feaa407dedbb98545b3f5e3ef916450b3337b9ed9bf5ee078a84a",
+      "name": "PerformanceGame.h"
+    },
+    {
+      "sha256": "fe8986570792915e46ecb1c9f568f83b083ed7496173e6354d6ca8ea231cb37e",
+      "name": "PerformanceMixer.h"
+    },
+    {
+      "sha256": "20faf36fae934b33988307accff4202791da3df5cb04b2a753cfa5fc70fd597a",
+      "name": "PianoCore.cpp"
+    },
+    {
+      "sha256": "9118a1e4faf758745efa3ebaedd5d206956c192d70366f39708daa01f356cdb0",
+      "name": "PianoCore.h"
+    },
+    {
+      "sha256": "29cce092249b75e20f2450d3130ebe7fa50916c62745cbcf41c182d111b43a81",
+      "name": "PolyMix.h"
+    },
+    {
+      "sha256": "96fba87a6168ecdc94166dda22d0b5ae67d52a131b746382f75280e29753e11e",
+      "name": "ResetTrace.h"
+    },
+    {
+      "sha256": "4339c94cd51b73e9ecfa991cebc8999d0f2623fcb84a5b1b19c6999a6ae2f705",
+      "name": "SampleUpload.h"
+    },
+    {
+      "sha256": "122a82a58a223f8880a5131cb18893847699e28d6ee5a3284d29830da2524198",
+      "name": "SampleVoice.h"
+    },
+    {
+      "sha256": "bcb806f7878f41a6f5653a0281e30cd98ef68ab6ea0efe4f4efca7d6d9449ea5",
+      "name": "ScoreScreen.h"
+    },
+    {
+      "sha256": "e6a42cd467ae2c7a31ff111ea1ce4aabd06648368941ae8d46d989a32f399480",
+      "name": "StorageTransaction.h"
+    },
+    {
+      "sha256": "7b2a0a89cf0d8eaf694c679768922e98e43dee380178b7ae3fbaab60627ff945",
+      "name": "WebUi.h"
+    }
+  ],
+  "webTests": "web-tests.log (mock API)",
+  "builtAtUtc": "2026-11-26T01:23:21.4504755Z",
+  "uploaded": false,
+  "offsets": {
+    "Board2_1Piano.ino.bin": "0x10000",
+    "boot_app0.bin": "0xe000",
+    "Board2_1Piano.ino.bootloader.bin": "0x0",
+    "Board2_1Piano.ino.partitions.bin": "0x8000"
+  },
+  "version": "0.6.39-board2_1",
+  "nativeTests": "native-tests.log",
+  "files": [
+    {
+      "sha256": "2878263152274c20e04518b834b8072624cfb260075d2e9068717b25e7051929",
+      "name": "Board2_1Piano.ino.bin",
+      "bytes": 1300688
+    },
+    {
+      "sha256": "2a71d69b471e20c2bac7fb469f3c6a807b3ebee780e348e5889db0da849ca363",
+      "name": "Board2_1Piano.ino.bootloader.bin",
+      "bytes": 15104
+    },
+    {
+      "sha256": "148b959cbff1c38aa8e1d5c0ba9d612c54997b945e56a63f41223eef650653a1",
+      "name": "Board2_1Piano.ino.partitions.bin",
+      "bytes": 3072
+    },
+    {
+      "sha256": "f94c5d786a7a8fab06ac5d10e33bf37711a6697636dc037559ea19cc410a17f0",
+      "name": "boot_app0.bin",
+      "bytes": 8192
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+GNU Unifont 17.0.03 interface and song-title subset
+
+Copyright (C) 1998-2025 Roman Czyborra, Paul Hardy, Qianqian Fang,
+Andrew Miller, Johnnie Weaver, David Corbett, Aella Chiana Moskopp,
+Rebecca Bettencourt, Minseo Lee, Ho-Seok Ee, et al.
+
+The font bitmap data in ChineseFont.h are a subset of GNU Unifont 17.0.03.
+They are distributed here under the SIL Open Font License version 1.1.
+The complete license is included in OFL-1.1.txt in this directory.
+
+Source font:
+https://unifoundry.com/pub/unifont/unifont-17.0.03/font-builds/unifont-17.0.03.hex.gz
+Upstream licensing and attribution:
+https://unifoundry.com/LICENSE.txt
+https://unifoundry.com/OFL-1.1.txt
+
+The source archive is kept in the project's work-build/font-source directory.
+Generate-ChineseFont.py selects the interface characters in DisplayText.h,
+the ASCII range, and all 6,763 GB2312 Han characters for imported song titles.
+It preserves the original bitmaps. The screen renderer scales them at runtime.
+This license notice applies to the font data, not to the surrounding firmware.

@@ -1,0 +1,12 @@
+preprocessors:
+  - id: filter-punctuation
+  - id: strip-whitespace
+  - id: lowercase
+converters:
+  - id: chinese-pinyin
+    kwargs:
+      dict_path: '@dictionaries/ds-zh-pinyin-lite.txt'
+  - id: dictionary
+    language: en
+    kwargs:
+      dict_path: '@dictionaries/ds_cmudict-07b.txt'

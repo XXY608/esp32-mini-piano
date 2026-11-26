@@ -1,0 +1,29 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <DefineConstants>$(DefineConstants);PIANO_SOUNDFONTS</DefineConstants>
+    <OutputType>Exe</OutputType><TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings><Nullable>enable</Nullable>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Program.cs" />
+    <Compile Include="LyricsBindingTests.cs" />
+    <Compile Include="../AudioInstrument.cs" Link="AudioInstrument.cs" />
+    <Compile Include="../SoundFontAudio.cs" Link="SoundFontAudio.cs" />
+    <Compile Include="../ScoreParser.cs" Link="ScoreParser.cs" />
+    <Compile Include="../HotkeySettings.cs" Link="HotkeySettings.cs" />
+    <Compile Include="../AppSettings.cs" Link="AppSettings.cs" />
+    <Compile Include="../SettingsWriter.cs" Link="SettingsWriter.cs" />
+    <Compile Include="../BpmFileName.cs" Link="BpmFileName.cs" />
+    <Compile Include="../ImportedScore.cs" Link="ImportedScore.cs" />
+    <Compile Include="../ScoreTiming.cs" Link="ScoreTiming.cs" />
+    <Compile Include="../CcmzImporter.cs" Link="CcmzImporter.cs" />
+    <Compile Include="../OnlineScoreClient.cs" Link="OnlineScoreClient.cs" />
+    <Compile Include="../MusicXmlImporter.cs" Link="MusicXmlImporter.cs" />
+    <Compile Include="../MidiImporter.cs" Link="MidiImporter.cs" />
+    <Compile Include="../PracticeModeModel.cs" Link="PracticeModeModel.cs" />
+    <Compile Include="../Lyrics.cs" Link="Lyrics.cs" />
+    <Compile Include="../ScoreLyrics.cs" Link="ScoreLyrics.cs" />
+    <Compile Include="../LocalAudioRenderer.cs" Link="LocalAudioRenderer.cs" />
+  </ItemGroup>
+</Project>
