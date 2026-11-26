@@ -59,14 +59,27 @@ for (const [i, label] of ["1", "2", "3", "4", "5", "6", "7", "降八度", "升�
   key.textContent = label;
   key.setAttribute("aria-label", i < 7 ? "琴键 " + label : label);
   key.setAttribute("aria-keyshortcuts", i < 7 ? label : ["J", "K", "L"][i - 7]);
+  // A very quick tap can arrive entirely between two audio blocks.
+  // Give taps enough time to sound while preserving held notes and chords.
+  const pressed = new Map();
+  let pressNumber = 0;
   key.addEventListener("pointerdown", event => {
     if (event.button !== 0) return;
     key.setPointerCapture(event.pointerId);
-    setInput("pointer-" + event.pointerId, i);
+    const source = "pointer-" + i + "-" + ++pressNumber;
+    pressed.set(event.pointerId, { source, time: performance.now() });
+    setInput(source, i);
     event.preventDefault();
   });
   for (const type of ["pointerup", "pointercancel", "lostpointercapture"]) {
-    key.addEventListener(type, event => setInput("pointer-" + event.pointerId, -1));
+    key.addEventListener(type, event => {
+      const press = pressed.get(event.pointerId);
+      if (!press) return;
+      pressed.delete(event.pointerId);
+      const delay = type === "pointerup" && i < 7 ? 65 - (performance.now() - press.time) : 0;
+      if (delay > 0) setTimeout(() => setInput(press.source, -1), delay);
+      else setInput(press.source, -1);
+    });
   }
   let taps = 0;
   key.addEventListener("click", event => {
