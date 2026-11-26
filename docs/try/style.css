@@ -27,6 +27,7 @@ button:focus-visible, select:focus-visible, input:focus-visible, a:focus-visible
 .modifiers { grid-template-columns: repeat(3, minmax(0, 1fr)); margin-top: .65rem; }
 .key { user-select: none; touch-action: none; padding: .35rem .08rem; text-align: center; }
 .keys .key { min-height: clamp(4rem, 15vw, 7.5rem); color: #152934; background: #e9f2f3; box-shadow: inset 0 -.4rem #97b2be; font-size: clamp(1.1rem, 4vw, 1.65rem); font-weight: 750; }
+.key-hint { display: block; font-size: .72rem; font-weight: 600; }
 .keys .key.target { background: #b0ecdb; box-shadow: inset 0 -.4rem #6cb6a7; }
 .keys .key.held, .modifiers .key.held { background: #ffd884; color: #18242d; box-shadow: inset 0 -.14rem #b37a2e; }
 .shortcuts { font-size: .85rem; }

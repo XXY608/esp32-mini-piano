@@ -2,7 +2,12 @@
 
 const byId = id => document.getElementById(id);
 const melody = [1, 2, 3, 4, 5, 6, 7, 6, 5, 4, 3, 2, 1];
-const keyboard = ["Digit1", "Digit2", "Digit3", "Digit4", "Digit5", "Digit6", "Digit7", "KeyJ", "KeyK", "KeyL"];
+const layout = [
+  ["KeyZ", "Z", "1"], ["KeyX", "X", "2"], ["KeyC", "C", "3"], ["KeyV", "V", "4"],
+  ["KeyB", "B", "5"], ["KeyN", "N", "6"], ["KeyM", "M", "7"],
+  ["Comma", ",", "降八度"], ["Period", ".", "升半音"], ["Slash", "/", "升八度"]
+];
+const keyboard = new Map(layout.map(([code], index) => [code, index]));
 const buttons = [];
 const notes = [];
 const inputs = new Map();
@@ -52,13 +57,18 @@ function releaseAll() {
   setInput("", -1);
 }
 
-for (const [i, label] of ["1", "2", "3", "4", "5", "6", "7", "降八度", "升半音", "升八度"].entries()) {
+for (const [i, [, shortcut, label]] of layout.entries()) {
   const key = document.createElement("button");
   key.className = "key";
   key.type = "button";
   key.textContent = label;
+  const hint = document.createElement("span");
+  hint.className = "key-hint";
+  hint.textContent = shortcut;
+  hint.setAttribute("aria-hidden", "true");
+  key.append(hint);
   key.setAttribute("aria-label", i < 7 ? "琴键 " + label : label);
-  key.setAttribute("aria-keyshortcuts", i < 7 ? label : ["J", "K", "L"][i - 7]);
+  key.setAttribute("aria-keyshortcuts", shortcut);
   // A very quick tap can arrive entirely between two audio blocks.
   // Give taps enough time to sound while preserving held notes and chords.
   const pressed = new Map();
@@ -93,8 +103,8 @@ for (const [i, label] of ["1", "2", "3", "4", "5", "6", "7", "降八度", "升�
 }
 
 document.addEventListener("keydown", event => {
-  const i = keyboard.indexOf(event.code);
-  if (i < 0 || !active || event.altKey || event.ctrlKey || event.metaKey ||
+  const i = keyboard.get(event.code);
+  if (i === undefined || !active || event.altKey || event.ctrlKey || event.metaKey ||
       event.target.closest("input,select,textarea,[contenteditable]")) return;
   event.preventDefault();
   if (!event.repeat) setInput(event.code, i);
@@ -150,7 +160,7 @@ async function prepareOutput() {
           byId("status").textContent = "音阶弹完了！可以再来一遍，或切到自由弹奏。";
           byId("practice").textContent = "再弹一遍";
         } else if (active) {
-          byId("status").textContent = progress < melody.length ? "下一个键：" + melody[progress] : "最后一个音正在播放。";
+          byId("status").textContent = progress < melody.length ? "下一个键：" + melody[progress] + "（" + layout[melody[progress] - 1][1] + "）" : "最后一个音正在播放。";
         }
         draw();
       }
@@ -218,7 +228,7 @@ async function start(practice) {
     active = true;
     byId("mode-label").textContent = practice ? "跟弹练习" : "自由弹奏";
     byId("practice").textContent = practice ? "重新跟弹" : "开始跟弹";
-    byId("status").textContent = practice ? "先弹亮起的 1。" : "可以用键盘、鼠标或触屏弹奏。";
+    byId("status").textContent = practice ? "先弹亮起的 1（Z）。" : "可以用键盘、鼠标或触屏弹奏。";
     draw();
   } catch (error) {
     active = false;
