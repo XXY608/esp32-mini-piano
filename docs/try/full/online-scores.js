@@ -3,6 +3,8 @@
 {
   const results = el("online-results");
   const status = el("online-status");
+  const fileStatus = el("online-file-status");
+  const filePicker = el("online-file");
   const panel = el("scores");
   const query = el("online-query");
   const form = el("online-form");
@@ -11,6 +13,7 @@
   const chongchongSearch = "https://esp32-piano-score-lookup.atomicgem65.chatgpt.site/search";
   const normalize = value => value.normalize("NFKC").toLowerCase();
   let indexRequest, busyId = null, searchVersion = 0, searchRequest;
+  let importingFile = false;
 
   async function fetchJSON(file, sizeLimit, signal = AbortSignal.timeout(15000)) {
     const response = await fetch(file, { signal, credentials: "omit" });
@@ -37,6 +40,7 @@
   function songId(entry) { return "online-" + entry.id; }
 
   function refreshButtons() {
+    for (const button of results.querySelectorAll(".pick-score-file")) button.disabled = importingFile;
     for (const button of results.querySelectorAll("button[data-song]")) {
       const added = hasSong(button.dataset.song);
       button.disabled = added || Boolean(busyId);
@@ -53,13 +57,28 @@
       const detail = document.createElement("p");
       title.textContent = entry.title;
       const action = document.createElement(fromChongchong ? "a" : "button");
+      let actions = action;
       if (fromChongchong) {
+        item.classList.add("external-score");
         detail.textContent = entry.artist || "虫虫钢琴";
         action.href = "https://www.gangqinpu.com/cchtml/" + entry.id + ".htm";
         action.target = "_blank";
         action.rel = "noopener noreferrer";
-        action.textContent = "查看曲谱";
-        action.setAttribute("aria-label", "在虫虫钢琴查看「" + entry.title + "」（新标签）");
+        action.textContent = "虫虫详情与下载";
+        action.setAttribute("aria-label", "虫虫详情与下载 · " + entry.title + "（新标签）");
+        const pickFile = document.createElement("button");
+        pickFile.type = "button";
+        pickFile.className = "pick-score-file";
+        pickFile.textContent = "导入已有曲谱";
+        pickFile.setAttribute("aria-label", "导入已有曲谱 · " + entry.title);
+        pickFile.addEventListener("click", () => {
+          fileStatus.textContent = "";
+          filePicker.value = "";
+          filePicker.click();
+        });
+        actions = document.createElement("div");
+        actions.className = "score-actions";
+        actions.append(action, pickFile);
       } else {
         detail.textContent = entry.author + " · " + entry.bpm + " BPM · " + (entry.polyphony ? "单音 / 多音" : "单音");
         action.type = "button";
@@ -68,7 +87,7 @@
         action.onclick = () => add(entry);
       }
       text.append(title, detail);
-      item.append(text, action);
+      item.append(text, actions);
       results.append(item);
     }
     refreshButtons();
@@ -103,7 +122,7 @@
                 entry.title && typeof entry.artist === "string")) throw new Error("搜索结果格式无效。");
         render(data.results, true);
         status.textContent = data.results.length ?
-          "显示 " + data.results.length + " 条匹配曲谱。请在虫虫详情页查看谱面和获取条件。" :
+          "找到 " + data.results.length + " 条曲谱。虫虫的 PDF 请在官网登录后下载。已有 TXT 简谱或琴端 JSON 可直接导入。" :
           "虫虫钢琴的搜索结果里没有匹配「" + keyword + "」的曲谱，可以换个关键词。";
         return;
       }
@@ -123,6 +142,26 @@
         "本站练习曲暂时无法载入，请点「搜索」重试。";
     }
   }
+
+  filePicker.addEventListener("change", async () => {
+    const file = filePicker.files[0];
+    if (!file || importingFile) return;
+    importingFile = true;
+    refreshButtons();
+    fileStatus.textContent = "正在导入「" + file.name + "」…";
+    try {
+      const reading = readScoreFile(file);
+      const starting = /\.(?:txt|json)$/i.test(file.name) && file.size <= 120 * 1024 ? powerOn() : undefined;
+      const [song] = await Promise.all([reading, starting]);
+      fileStatus.textContent = importNotice(song, await importSong(song));
+    } catch (error) {
+      fileStatus.textContent = error.message || "曲谱导入失败。";
+    } finally {
+      importingFile = false;
+      refreshButtons();
+      fileStatus.scrollIntoView({ block: "nearest" });
+    }
+  });
 
   async function add(entry) {
     const id = songId(entry);

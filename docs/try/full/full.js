@@ -316,27 +316,31 @@ async function boot() {
 
 el("power").onclick = () => powerOn().catch(() => {});
 
+async function readScoreFile(file) {
+  if (/\.pdf$/i.test(file.name)) throw new Error("PDF 是谱面文件，请选用 UTF-8 TXT 简谱或琴端 JSON。");
+  if (!/\.(?:txt|json)$/i.test(file.name)) throw new Error("请选择 TXT 或琴端 JSON 曲谱。");
+  if (file.size > 120 * 1024) throw new Error("曲谱超过 120 KiB。");
+  const text = await file.text();
+  const id = "web-" + crypto.randomUUID();
+  if (/\.json$/i.test(file.name)) {
+    const song = JSON.parse(text.replace(/^\uFEFF/, ""));
+    if (!song || typeof song !== "object" || Array.isArray(song)) throw new Error("请选择琴端歌曲 JSON。");
+    return { ...song, id };
+  }
+  const tag = /[_\s]*(?:源谱\s*)?BPM\s*[:：]\s*(\d+)(?=\.txt$)/i.exec(file.name);
+  const bpm = tag ? Number(tag[1]) : Number(el("bpm").value);
+  if (!Number.isInteger(bpm) || bpm < 20 || bpm > 400) throw new Error("BPM 必须在 20 至 400 之间。");
+  return { id, bpm, title: file.name.slice(0, tag ? tag.index : -4).trim() || "自定义曲谱",
+    notes: PianoScore.parseScore(text) };
+}
+
 el("import-form").onsubmit = async event => {
   event.preventDefault();
   const file = el("file").files[0];
   if (!file || !active) return;
   el("import").disabled = true;
   try {
-    if (file.size > 120 * 1024) throw new Error("曲谱超过 120 KiB。");
-    const text = await file.text();
-    const id = "web-" + crypto.randomUUID();
-    let song;
-    if (/\.json$/i.test(file.name)) {
-      song = JSON.parse(text.replace(/^\uFEFF/, ""));
-      if (!song || typeof song !== "object" || Array.isArray(song)) throw new Error("请选择琴端歌曲 JSON。");
-      song.id = id;
-    } else if (/\.txt$/i.test(file.name)) {
-      const tag = /[_\s]*(?:源谱\s*)?BPM\s*[:：]\s*(\d+)(?=\.txt$)/i.exec(file.name);
-      const bpm = tag ? Number(tag[1]) : Number(el("bpm").value);
-      if (!Number.isInteger(bpm) || bpm < 20 || bpm > 400) throw new Error("BPM 必须在 20 至 400 之间。");
-      song = { id, bpm, title: file.name.slice(0, tag ? tag.index : -4).trim() || "自定义曲谱",
-        notes: PianoScore.parseScore(text) };
-    } else throw new Error("请选择 TXT 或琴端 JSON 曲谱。");
+    const song = await readScoreFile(file);
     el("file-status").textContent = importNotice(song, await importSong(song));
   } catch (error) {
     el("file-status").textContent = error.message || "曲谱导入失败。";

@@ -7,10 +7,10 @@
   <title>迷你电子琴 2.0 · 完整模拟</title>
   <link rel="icon" href="data:,">
   <link rel="stylesheet" href="../style.css?v=2">
-  <link rel="stylesheet" href="full.css?v=4">
+  <link rel="stylesheet" href="full.css?v=5">
   <script src="score-parser.js" defer></script>
-  <script src="full.js?v=3" defer></script>
-  <script src="online-scores.js?v=4" defer></script>
+  <script src="full.js?v=4" defer></script>
+  <script src="online-scores.js?v=5" defer></script>
 </head>
 <body>
 <main>
@@ -62,6 +62,8 @@
           <button type="submit">搜索</button>
         </form>
         <p id="online-status" role="status"></p>
+        <p id="online-file-status" role="status"></p>
+        <input type="file" id="online-file" accept=".txt,.json" hidden>
         <ul id="online-results" class="online-results"></ul>
         <div id="online-alternatives" class="online-alternatives" hidden>
           <a id="external-score-search" target="_blank" rel="noopener noreferrer">在虫虫钢琴查看全部结果</a>

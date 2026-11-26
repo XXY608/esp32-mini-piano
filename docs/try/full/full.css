@@ -35,7 +35,7 @@ form input { max-width: min(75vw, 18rem); }
 .score-sources label:has(:checked) { border-color: var(--mint); background: #1b343b; color: #f1f6f9; }
 .score-sources input { accent-color: var(--mint); margin: 0; }
 #online-query { min-width: 0; width: 100%; max-width: none; min-height: 2.65rem; color: inherit; font: inherit; background: #0d1b22; border: 1px solid #527182; border-radius: .5rem; padding: .4rem .65rem; }
-#online-status:empty { display: none; }
+#online-status:empty, #online-file-status:empty { display: none; }
 .online-results { list-style: none; margin: .5rem 0; padding: 0; }
 .online-results li { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: .75rem; padding: .6rem .65rem; border: 1px solid #355363; border-radius: .55rem; background: #16242e; }
 .online-results li + li { margin-top: .35rem; }
@@ -44,6 +44,13 @@ form input { max-width: min(75vw, 18rem); }
 .online-results button { min-width: 6rem; font-size: .84rem; }
 .online-results a { font-size: .84rem; white-space: nowrap; }
 .online-results button:disabled { cursor: default; }
+.score-actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: .35rem .75rem; }
+.online-results strong { overflow-wrap: anywhere; }
+
+@media (max-width: 36rem) {
+  .online-results .external-score { grid-template-columns: minmax(0, 1fr); gap: .35rem; }
+  .external-score .score-actions { justify-content: flex-start; }
+}
 
 .online-alternatives { margin: .7rem 0; display: flex; gap: .4rem 1rem; flex-wrap: wrap; font-size: .9rem; }
 .online-alternatives[hidden] { display: none; }
