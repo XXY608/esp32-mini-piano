@@ -131,7 +131,7 @@ function paint(buffer, state) {
   const description = menu ? menuNames[menu] + (menu === 1 ? " · " + homeNames[home] :
     menu === 2 ? " · " + launchNames[row] : "") :
     (gameNames[game] || modeNames[mode]) + (paused ? " · 已暂停" : "");
-  const status = description + " · 音量 " + volume + "%";
+  const status = description + " · 音量 " + volume + "%" + (bankInFlight ? " · 正在载入音色…" : "");
   if (el("screen-state").textContent !== status) el("screen-state").textContent = status;
   if (saved !== revision) {
     if (revision !== -1 || saved !== 0) save(settingsKey, { volume, instrument, bpm, transpose, flags });
@@ -150,7 +150,7 @@ function drawFrame(now) {
 }
 
 async function bytes(url) {
-  const response = await fetch(url);
+  const response = await fetch(url, { signal: AbortSignal.timeout(180000) });
   if (!response.ok) throw new Error("资源载入失败，请重试。");
   return response.arrayBuffer();
 }
