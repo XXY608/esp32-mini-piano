@@ -6,7 +6,7 @@
 
 我沿用了第一版的 PCB 和部分部件，也有了新的琴键与外观。
 
-[结构与打印](结构/使用说明.md) · [固件源码](固件/Board2_1Piano/README.md) · [配套软件](配套软件/README.md) · [返回首页](../README.md)
+[快速上手](快速上手.md) · [制作资料](制作资料.md) · [固件源码](固件/Board2_1Piano/README.md) · [返回首页](../README.md)
 
 </div>
 
