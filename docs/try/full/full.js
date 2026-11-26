@@ -317,7 +317,7 @@ async function boot() {
 el("power").onclick = () => powerOn().catch(() => {});
 
 function scoreFileParts(name) {
-  const stem = name.replace(/\.(?:txt|json)$/i, "");
+  const stem = name.replace(/\.(?:txt|json|ccmz)$/i, "");
   const bpmTag = /[_\s]*(?:源谱\s*)?BPM\s*[:：]\s*(\d+)(?:\s+\(\d+\))?$/i.exec(stem);
   return {
     title: (bpmTag ? stem.slice(0, bpmTag.index) : stem).trim() || "自定义曲谱",
@@ -325,10 +325,41 @@ function scoreFileParts(name) {
   };
 }
 
+function scoreFileSizeLimit(name) {
+  return /\.ccmz$/i.test(name) ? 8 * 1024 * 1024 : 120 * 1024;
+}
+
+async function convertCcmz(file, title, id) {
+  const bytes = await file.arrayBuffer();
+  const worker = new Worker("ccmz-worker.js", { type: "module" });
+  try {
+    return await new Promise((resolve, reject) => {
+      const timeout = setTimeout(() => reject(new Error("CCMZ 转换超时，请重试。")), 60000);
+      const finish = (callback, value) => {
+        clearTimeout(timeout);
+        callback(value);
+      };
+      worker.onmessage = ({ data }) => {
+        if (data?.song) finish(resolve, data.song);
+        else finish(reject, new Error(data?.error || "CCMZ 转换失败。"));
+      };
+      worker.onerror = () => finish(reject, new Error("CCMZ 转换器无法启动，请刷新后重试。"));
+      worker.onmessageerror = () => finish(reject, new Error("无法读取 CCMZ 转换结果。"));
+      worker.postMessage({ bytes, title, id }, [bytes]);
+    });
+  } finally {
+    worker.terminate();
+  }
+}
+
 async function readScoreFile(file, id = "web-" + crypto.randomUUID()) {
-  if (/\.pdf$/i.test(file.name)) throw new Error("PDF 是谱面文件，请选用 UTF-8 TXT 简谱或琴端 JSON。");
-  if (!/\.(?:txt|json)$/i.test(file.name)) throw new Error("请选择 TXT 或琴端 JSON 曲谱。");
-  if (file.size > 120 * 1024) throw new Error("曲谱超过 120 KiB。");
+  if (/\.ccmz$/i.test(file.name)) {
+    if (file.size > scoreFileSizeLimit(file.name)) throw new Error("CCMZ 文件超过 8 MiB。");
+    return convertCcmz(file, scoreFileParts(file.name).title, id);
+  }
+  if (/\.pdf$/i.test(file.name)) throw new Error("PDF 是谱面文件，请选用 CCMZ、TXT 简谱或琴端 JSON。");
+  if (!/\.(?:txt|json)$/i.test(file.name)) throw new Error("请选择 CCMZ、TXT 或琴端 JSON 曲谱。");
+  if (file.size > scoreFileSizeLimit(file.name)) throw new Error("曲谱超过 120 KiB。");
   const text = await file.text();
   if (/\.json$/i.test(file.name)) {
     const song = JSON.parse(text.replace(/^\uFEFF/, ""));
@@ -346,6 +377,7 @@ el("import-form").onsubmit = async event => {
   const file = el("file").files[0];
   if (!file || !active) return;
   el("import").disabled = true;
+  el("file-status").textContent = /\.ccmz$/i.test(file.name) ? "正在转换 CCMZ 曲谱…" : "正在导入曲谱…";
   try {
     const song = await readScoreFile(file);
     el("file-status").textContent = importNotice(song, await importSong(song));

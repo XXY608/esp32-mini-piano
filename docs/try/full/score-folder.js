@@ -43,12 +43,12 @@ const PianoScoreFolder = (() => {
 
   async function fromFiles(files) {
     const localFiles = Array.from(files).filter(file => file.webkitRelativePath.split("/").length === 2 &&
-      /\.(?:txt|json)$/i.test(file.name) && !/\.lyrics\.txt$/i.test(file.name) &&
-      file.size > 0 && file.size <= 120 * 1024);
+      /\.(?:txt|json|ccmz)$/i.test(file.name) && !/\.lyrics\.txt$/i.test(file.name) &&
+      file.size > 0 && file.size <= scoreFileSizeLimit(file.name));
     const names = new Set(localFiles.map(file => file.name));
     const originals = localFiles.filter(file => !names.has(file.name.replace(/ \(\d+\)(?=\.[^.]+$)/, "")) ||
       !/ \(\d+\)\.[^.]+$/.test(file.name));
-    if (!originals.length) throw new Error("所选文件夹里没有可读取的 TXT 简谱或琴端 JSON。");
+    if (!originals.length) throw new Error("所选文件夹里没有可读取的 CCMZ、TXT 简谱或琴端 JSON。");
     const entries = await Promise.all(originals.map(async file => {
       const fingerprint = JSON.stringify([file.name, file.size, file.lastModified]);
       const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(fingerprint));

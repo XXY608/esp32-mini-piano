@@ -9,9 +9,9 @@
   <link rel="stylesheet" href="../style.css?v=2">
   <link rel="stylesheet" href="full.css?v=6">
   <script src="score-parser.js" defer></script>
-  <script src="full.js?v=5" defer></script>
-  <script src="score-folder.js" defer></script>
-  <script src="online-scores.js?v=6" defer></script>
+  <script src="full.js?v=6" defer></script>
+  <script src="score-folder.js?v=2" defer></script>
+  <script src="online-scores.js?v=7" defer></script>
 </head>
 <body>
 <main>
@@ -79,11 +79,11 @@
       <section class="score-import local-import" aria-labelledby="local-title">
         <h2 id="local-title">导入本地文件</h2>
         <form id="import-form">
-          <label>曲谱文件 <input type="file" id="file" accept=".txt,.json" required></label>
+          <label>曲谱文件 <input type="file" id="file" accept=".txt,.json,.ccmz" required></label>
           <label>TXT 的默认速度 <input type="number" id="bpm" min="20" max="400" value="120"></label>
           <button type="submit" id="import" disabled>导入到曲库</button>
         </form>
-        <p>支持琴端 JSON 和 UTF-8 TXT 简谱。TXT 文件名标注 BPM 时优先使用该值。曲谱保存在当前浏览器中。</p>
+        <p>支持 CCMZ、琴端 JSON 和 UTF-8 TXT 简谱。TXT 文件名标注 BPM 时优先使用该值。CCMZ 在本机转换，曲谱保存在当前浏览器中。</p>
         <p id="file-status" role="status"></p>
       </section>
     </details>

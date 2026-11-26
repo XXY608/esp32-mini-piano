@@ -97,7 +97,7 @@
       if (fromChongchong) {
         const availability = document.createElement("span");
         availability.className = "score-unavailable";
-        availability.textContent = "暂无可导入谱";
+        availability.textContent = "搜索结果";
         return scoreRow(entry.title, entry.artist || "虫虫钢琴", availability);
       }
       const id = songId(entry);
@@ -136,7 +136,7 @@
                 entry.title && typeof entry.artist === "string")) throw new Error("搜索结果格式无效。");
         render(data.results, true);
         status.textContent = data.results.length ?
-          "虫虫钢琴找到 " + data.results.length + " 条曲谱。当前未提供可直接导入的乐谱文件。" :
+          "虫虫钢琴找到 " + data.results.length + " 条曲谱。已有 CCMZ 可在下方导入，或添加到「我的简谱」。" :
           "虫虫钢琴的搜索结果里没有匹配「" + keyword + "」的曲谱，可以换个关键词。";
         return;
       }

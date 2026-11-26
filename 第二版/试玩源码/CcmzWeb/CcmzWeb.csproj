@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk.WebAssembly">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <AssemblyName>CcmzWeb</AssemblyName>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <InvariantGlobalization>true</InvariantGlobalization>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <SupportedPlatform Include="browser" />
+    <Compile Include="../../配套软件/CcmzImporter.cs" Link="CcmzImporter.cs" />
+    <Compile Include="../../配套软件/ImportedScore.cs" Link="ImportedScore.cs" />
+    <Compile Include="../../配套软件/ScoreParser.cs" Link="ScoreParser.cs" />
+    <Compile Include="../../配套软件/ScoreTiming.cs" Link="ScoreTiming.cs" />
+    <Compile Include="../../配套软件/ScoreLyrics.cs" Link="ScoreLyrics.cs" />
+    <Compile Include="../../配套软件/Lyrics.cs" Link="Lyrics.cs" />
+    <Compile Include="../../配套软件/Mobile/src/HarmonicaPlayer.Mobile.Core/DeviceContracts.cs" Link="DeviceContracts.cs" />
+    <Compile Include="../../配套软件/Mobile/src/HarmonicaPlayer.Mobile.Core/DeviceAudio.cs" Link="DeviceAudio.cs" />
+    <Compile Include="../../配套软件/Mobile/src/HarmonicaPlayer.Mobile.Core/MobileDeviceLyrics.cs" Link="MobileDeviceLyrics.cs" />
+    <Compile Include="../../配套软件/Mobile/src/HarmonicaPlayer.Mobile.Core/MobileLyrics.cs" Link="MobileLyrics.cs" />
+  </ItemGroup>
+</Project>
